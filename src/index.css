@@ -1,0 +1,170 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
+  }
+
+  body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
+  }
+
+  /* Fix for mobile Safari height issues */
+  @supports (-webkit-touch-callout: none) {
+    .min-h-screen {
+      min-height: -webkit-fill-available;
+    }
+  }
+}
+
+@layer components {
+  /* Ensure touch targets are large enough */
+  [role="button"],
+  input,
+  select {
+    min-height: 44px;
+    min-width: 44px;
+    font-size: 16px;
+  }
+
+  /* Window drag handle improvements */
+  .window-drag-handle button {
+    min-height: 48px;
+    min-width: 48px;
+    touch-action: manipulation;
+  }
+
+  .window-drag-handle {
+    user-select: none;
+    cursor: move;
+  }
+
+  /* Scrolling improvements */
+  .overflow-auto,
+  .overflow-y-auto,
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    scroll-behavior: smooth;
+  }
+
+  /* Desktop icon improvements */
+  .desktop-icon {
+    touch-action: none;
+    user-select: none;
+  }
+
+  /* Responsive text sizes */
+  @media (max-width: 640px) {
+    .text-responsive {
+      font-size: clamp(14px, 4vw, 16px);
+    }
+    .text-responsive-sm {
+      font-size: clamp(12px, 3.5vw, 14px);
+    }
+    .text-responsive-xs {
+      font-size: clamp(10px, 3vw, 12px);
+    }
+  }
+
+  /* Responsive spacing */
+  @media (max-width: 640px) {
+    .p-responsive {
+      padding: clamp(8px, 2vw, 16px);
+    }
+    .m-responsive {
+      margin: clamp(8px, 2vw, 16px);
+    }
+    .gap-responsive {
+      gap: clamp(8px, 2vw, 16px);
+    }
+  }
+
+  /* Safe area insets */
+  .safe-area-insets {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Smooth scrolling */
+  .scroll-momentum {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Window content height calculation */
+  .window-content {
+    max-height: calc(100vh - var(--window-header-height) - var(--taskbar-height));
+  }
+
+  /* Responsive grid */
+  .responsive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: clamp(8px, 2vw, 16px);
+  }
+
+  /* Mobile scaling */
+  .scale-on-mobile {
+    transform-origin: center;
+    transition: transform 0.2s ease-out;
+  }
+
+  @media (max-width: 640px) {
+    .scale-on-mobile {
+      transform: scale(1.2);
+    }
+  }
+
+  /* Touch feedback */
+  @media (max-width: 640px) {
+    .touch-feedback {
+      transition: transform 0.1s ease-out;
+    }
+    .touch-feedback:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Mobile-specific variables */
+@media (max-width: 640px) {
+  :root {
+    --window-header-height: 56px;
+    --taskbar-height: 64px;
+    --icon-size: 48px;
+    --button-size: 44px;
+  }
+}
+
+/* Desktop-specific variables */
+@media (min-width: 641px) {
+  :root {
+    --window-header-height: 40px;
+    --taskbar-height: 48px;
+    --icon-size: 32px;
+    --button-size: 32px;
+  }
+}
