@@ -4,12 +4,18 @@ import { Desktop } from './components/Desktop/Desktop';
 import { TaskBar } from './components/TaskBar/TaskBar';
 import { WindowManager } from './components/WindowManager';
 import { AppContextProvider } from './context/AppContext';
+import { createClient } from '@supabase/supabase-js'
+import { Auth } from '@supabase/auth-ui-react'
+import { ThemeSupa } from '@supabase/auth-ui-shared'
+
+const supabase = createClient('https://gmeujceuwsdpsvcpytnv.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtZXVqY2V1d3NkcHN2Y3B5dG52Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzAyNDE3MzUsImV4cCI6MjA0NTgxNzczNX0.Sewmt744-ZbU-Ww4KIamIdldLULw1DrSbJkdlayhS5g')
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [windows, setWindows] = useState([]);
 
+  /** 
   useEffect(() => {
     const checkAuth = () => {
       try {
@@ -40,6 +46,7 @@ function App() {
     checkAuth();
   }, []);
 
+
   const handleLogin = () => {
     setIsLoggedIn(true);
   };
@@ -50,6 +57,28 @@ function App() {
     setIsLoggedIn(false);
     setWindows([]);
   };
+*/
+  const [session, setSession] = useState(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const handleLogout = () => {
+    supabase.auth.signOut({scope: 'local'}).then(() => { setWindows([])}).catch((error) => {
+      console.log(error);
+    })
+  }
 
   if (isLoading) {
     return (
@@ -61,8 +90,8 @@ function App() {
 
   return (
     <AppContextProvider>
-      {!isLoggedIn ? (
-        <Login onLogin={handleLogin} />
+      {!session ? (
+        <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} providers={['google', ]}/>
       ) : (
         <div className="h-screen w-screen overflow-hidden bg-gray-900 flex flex-col">
           <div className="flex-1 relative overflow-hidden">
