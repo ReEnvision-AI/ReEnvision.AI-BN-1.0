@@ -7,8 +7,9 @@ import { AppContextProvider } from './context/AppContext';
 import { createClient } from '@supabase/supabase-js'
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
+import UserService from './services/userService';
 
-const supabase = createClient('https://gmeujceuwsdpsvcpytnv.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtZXVqY2V1d3NkcHN2Y3B5dG52Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzAyNDE3MzUsImV4cCI6MjA0NTgxNzczNX0.Sewmt744-ZbU-Ww4KIamIdldLULw1DrSbJkdlayhS5g')
+const supabase = createClient(import.meta.env.VITE_SUPA_URL, import.meta.env.VITE_SUPA_KEY)
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -62,12 +63,14 @@ function App() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
+      UserService.setUser(session.user.id);
       setSession(session)
     })
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      UserService.setUser(session.user.id);
       setSession(session)
     })
 
@@ -75,7 +78,10 @@ function App() {
   }, [])
 
   const handleLogout = () => {
-    supabase.auth.signOut({scope: 'local'}).then(() => { setWindows([])}).catch((error) => {
+    supabase.auth.signOut({scope: 'local'}).then(() => {
+      UserService.setUser(null);
+      setWindows([]);
+    }).catch((error) => {
       console.log(error);
     })
   }
