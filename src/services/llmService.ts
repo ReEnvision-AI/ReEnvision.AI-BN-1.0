@@ -19,8 +19,10 @@ export type ChatRequest = {
     max_tokens?: number;
 }
 
+export type LoadingCallbackFunction = (progress: number, text: string) => void;
+
 const LLMService = {
-    async loadModel(): Promise<void>{
+    async loadModel(loadingCallback?: LoadingCallbackFunction): Promise<void>{
         console.log("LLMService:loadModel()")
         if (isModelLoaded) {
             return;
@@ -30,10 +32,9 @@ const LLMService = {
             new Worker(new URL("./llmworker.ts", import.meta.url), {type: "module"}),
             MODEL,
             {initProgressCallback: (report: webllm.InitProgressReport) => {
-                console.group();
-                console.log("progress:", report.progress);
-                console.log("text:", report.text);
-                console.groupEnd();
+                if (loadingCallback) {
+                    loadingCallback(report.progress, report.text);
+                }
             }}
         )
 

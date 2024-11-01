@@ -64,7 +64,7 @@ function App() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      UserService.setUser(session.user.id);
+      UserService.setUser(session?.user.id);
       setSession(session)
     })
 
@@ -89,7 +89,12 @@ function App() {
   }
 
   useEffect(() => {
-    LLMService.loadModel().then();
+    LLMService.loadModel((progress, text ) => {
+      console.group();
+      console.log("progress:", progress);
+      console.log("text:", text);
+      console.groupEnd();
+    }).then();
   }, [])
 
   if (isLoading) {
@@ -101,24 +106,24 @@ function App() {
   }
 
   return (
-    <AppContextProvider>
-      {!session ? (
-        <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} providers={['google', ]}/>
-      ) : (
-        <div className="h-screen w-screen overflow-hidden bg-gray-900 flex flex-col">
-          <div className="flex-1 relative overflow-hidden">
-            <Desktop windows={windows} setWindows={setWindows}>
-              <WindowManager windows={windows} setWindows={setWindows} />
-            </Desktop>
+      <AppContextProvider>
+        {!session ? (
+          <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} providers={['google', ]}/>
+        ) : (
+          <div className="h-screen w-screen overflow-hidden bg-gray-900 flex flex-col">
+            <div className="flex-1 relative overflow-hidden">
+              <Desktop windows={windows} setWindows={setWindows}>
+                <WindowManager windows={windows} setWindows={setWindows} />
+              </Desktop>
+            </div>
+            <TaskBar 
+              windows={windows} 
+              setWindows={setWindows} 
+              onLogout={handleLogout}
+            />
           </div>
-          <TaskBar 
-            windows={windows} 
-            setWindows={setWindows} 
-            onLogout={handleLogout}
-          />
-        </div>
-      )}
-    </AppContextProvider>
+        )}
+      </AppContextProvider>
   );
 }
 
