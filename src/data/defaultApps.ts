@@ -4,11 +4,11 @@ import {
 } from 'lucide-react';
 import { TextPad } from '../components/apps/TextPad';
 import { Calculator as CalculatorApp } from '../components/apps/Calculator';
-import { Settings as SettingsApp } from '../components/apps/Settings/Settings';
+//import { Settings as SettingsApp } from '../components/apps/Settings/Settings';
 import { Terminal as TerminalApp } from '../components/apps/Terminal';
 import { DataGrid } from '../components/apps/DataGrid/DataGrid';
 import { AIDevStudio } from '../components/apps/AIDevStudio/AIDevStudio';
-import { Prez } from '../components/apps/Prez/Prez';
+//import { Prez } from '../components/apps/Prez/Prez';
 import { PrezManifest } from '../components/apps/Prez/manifest';
 import { LocalAI } from '../components/apps/LocalAI/LocalAI';
 import { ChatyAI } from '../components/apps/ChatyAI/ChatyAI';
