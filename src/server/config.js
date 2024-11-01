@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 /*
  * OS.js - JavaScript Cloud/Web Desktop Platform
  *

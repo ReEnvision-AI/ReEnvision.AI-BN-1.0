@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Login } from './components/Login';
+//import { Login } from './components/Login';
 import { Desktop } from './components/Desktop/Desktop';
 import { TaskBar } from './components/TaskBar/TaskBar';
 import { WindowManager } from './components/WindowManager';
@@ -13,7 +13,7 @@ import LLMService from './services/llmService';
 const supabase = createClient(import.meta.env.VITE_SUPA_URL, import.meta.env.VITE_SUPA_KEY)
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  //const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [windows, setWindows] = useState([]);
 

@@ -22,7 +22,7 @@ export function AIPromptPanel() {
         <div className="bg-gray-800 rounded-lg p-4">
           <h3 className="text-lg font-semibold text-white mb-2">AI Assistant</h3>
           <p className="text-gray-400 text-sm">
-            Describe what you want to create, and I'll help you generate the code.
+            Describe what you want to create, and I`&apos`ll help you generate the code.
             You can ask for:
           </p>
           <ul className="text-gray-400 text-sm mt-2 space-y-1 list-disc list-inside">
