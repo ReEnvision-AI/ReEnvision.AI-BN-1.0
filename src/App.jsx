@@ -8,6 +8,7 @@ import { createClient } from '@supabase/supabase-js'
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
 import UserService from './services/userService';
+import LLMService from './services/llmService';
 
 const supabase = createClient(import.meta.env.VITE_SUPA_URL, import.meta.env.VITE_SUPA_KEY)
 
@@ -70,7 +71,7 @@ function App() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      UserService.setUser(session.user.id);
+      UserService.setUser(session?.user?.id);
       setSession(session)
     })
 
@@ -84,7 +85,12 @@ function App() {
     }).catch((error) => {
       console.log(error);
     })
+    LLMService.unloadModel().then();
   }
+
+  useEffect(() => {
+    LLMService.loadModel().then();
+  }, [])
 
   if (isLoading) {
     return (
