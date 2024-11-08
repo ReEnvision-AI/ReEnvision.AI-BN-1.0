@@ -13,10 +13,11 @@ import { FileManager } from '../components/apps/FileManager/FileManager';
 import { Prez } from '../components/apps/Prez/Prez';
 import { PrezManifest } from '../components/apps/Prez/manifest';
 import { LocalAI } from '../components/apps/LocalAI/LocalAI';
-import { ChatyAI } from '../components/apps/ChatyAI/ChatyAI';
+//import { ChatyAI } from '../components/apps/ChatyAI/ChatyAI';
 import { SalesFlow } from '../components/apps/SalesFlow/SalesFlow';
 import { AIBrowser } from '@reai/aibrowser';
 import { AIDevStudio } from '@reai/aidevstudio';
+import { ChattyAI } from '@reai/chattyai';
 
 export const defaultApps = [
   {
@@ -101,11 +102,11 @@ export const defaultApps = [
     }
   },
   {
-    id: 'chatyai',
-    name: 'Chaty AI',
+    id: 'chattyai',
+    name: 'Chatty AI',
     description: 'Local LLM inference engine with chat interface',
     icon: MessageSquare,
-    component: ChatyAI,
+    component: ChattyAI,
     category: 'development',
     version: '1.0.0',
     author: 'StackBlitz',
