@@ -1,4 +1,5 @@
-import { AppInfo } from '../../../types/apps';
+//import { AppInfo } from '../../../types/apps';
+import { AppInfo } from '@reai/types';
 import { Presentation } from 'lucide-react';
 import { Prez } from './Prez';
 

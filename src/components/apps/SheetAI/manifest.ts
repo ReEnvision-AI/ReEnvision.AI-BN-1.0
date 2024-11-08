@@ -1,4 +1,5 @@
-import { AppInfo } from '../../../types/apps';
+//import { AppInfo } from '../../../types/apps';
+import { AppInfo } from '@reai/types';
 import { FileSpreadsheet } from 'lucide-react';
 import { SheetAI } from './SheetAI';
 

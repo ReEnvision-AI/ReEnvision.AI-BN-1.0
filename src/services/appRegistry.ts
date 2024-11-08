@@ -1,4 +1,5 @@
-import { AppInfo } from '../types/apps';
+//import { AppInfo } from '../types/apps';
+import { AppInfo } from '@reai/types';
 import { defaultApps } from '../data/defaultApps';
 
 export class AppRegistry {
