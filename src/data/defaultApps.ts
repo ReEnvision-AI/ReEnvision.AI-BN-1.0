@@ -14,12 +14,13 @@ import { FileManager } from '../components/apps/FileManager/FileManager';
 //import { PrezManifest } from '../components/apps/Prez/manifest';
 //import { LocalAI } from '../components/apps/LocalAI/LocalAI';
 //import { ChatyAI } from '../components/apps/ChatyAI/ChatyAI';
-import { SalesFlow } from '../components/apps/SalesFlow/SalesFlow';
+//import { SalesFlow } from '../components/apps/SalesFlow/SalesFlow';
 import { AIBrowser } from '@reai/aibrowser';
 import { AIDevStudio } from '@reai/aidevstudio';
 import { ChattyAI } from '@reai/chattyai';
 import { LocalAI } from '@reai/locali';
 import { Prez, PrezManifest } from '@reai/prez';
+import { SalesFlow } from '@reai/salesflow';
 
 export const defaultApps = [
   {
