@@ -12,12 +12,13 @@ import { FileManager } from '../components/apps/FileManager/FileManager';
 //import { AIDevStudio } from '../components/apps/AIDevStudio/AIDevStudio';
 import { Prez } from '../components/apps/Prez/Prez';
 import { PrezManifest } from '../components/apps/Prez/manifest';
-import { LocalAI } from '../components/apps/LocalAI/LocalAI';
+//import { LocalAI } from '../components/apps/LocalAI/LocalAI';
 //import { ChatyAI } from '../components/apps/ChatyAI/ChatyAI';
 import { SalesFlow } from '../components/apps/SalesFlow/SalesFlow';
 import { AIBrowser } from '@reai/aibrowser';
 import { AIDevStudio } from '@reai/aidevstudio';
 import { ChattyAI } from '@reai/chattyai';
+import { LocalAI } from '@reai/locali';
 
 export const defaultApps = [
   {

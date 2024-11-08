@@ -9,11 +9,12 @@ import { Terminal as TerminalApp } from '../Terminal';
 import { Settings as SettingsApp } from '../Settings/Settings';
 import { AppStore } from './AppStore';
 import { Prez } from '../Prez/Prez';
-import { LocalAI } from '../LocalAI/LocalAI';
+//import { LocalAI } from '../LocalAI/LocalAI';
 import { SalesFlow } from '../SalesFlow/SalesFlow';
 import { AIBrowser } from '@reai/aibrowser';
 import { AIDevStudio } from '@reai/aidevstudio';
 import { ChattyAI } from '@reai/chattyai';
+import { LocalAI } from '@reai/locali';
 
 export const AVAILABLE_APPS = [
   {
