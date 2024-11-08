@@ -21,6 +21,7 @@
     "@reai/aidevstudio": "github:ReEnvision-AI/aidevstudio",
     "@reai/chattyai": "github:ReEnvision-AI/chattyai",
     "@reai/locali": "github:ReEnvision-AI/localai",
+    "@reai/prez": "github:ReEnvision-AI/prez",
     "@tanstack/react-virtual": "^3.0.0",
     "chart.js": "^4.4.0",
     "class-variance-authority": "^0.7.0",
