@@ -13,7 +13,7 @@ import { Prez } from '../Prez/Prez';
 import { LocalAI } from '../LocalAI/LocalAI';
 import { ChatyAI } from '../ChatyAI/ChatyAI';
 import { SalesFlow } from '../SalesFlow/SalesFlow';
-import { AIBrowser } from '../AIBrowser/AIBrowser';
+import { AIBrowser } from '@reai/aibrowser';
 
 export const AVAILABLE_APPS = [
   {

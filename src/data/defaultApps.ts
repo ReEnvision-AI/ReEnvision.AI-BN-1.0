@@ -15,7 +15,7 @@ import { PrezManifest } from '../components/apps/Prez/manifest';
 import { LocalAI } from '../components/apps/LocalAI/LocalAI';
 import { ChatyAI } from '../components/apps/ChatyAI/ChatyAI';
 import { SalesFlow } from '../components/apps/SalesFlow/SalesFlow';
-import { AIBrowser } from '../components/apps/AIBrowser/AIBrowser';
+import { AIBrowser } from '@reai/aibrowser'
 
 export const defaultApps = [
   {
