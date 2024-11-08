@@ -18,6 +18,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "^1.0.4",
     "@reai/aibrowser": "github:ReEnvision-AI/aibrowser",
+    "@reai/aidevstudio": "github:ReEnvision-AI/aidevstudio",
     "@tanstack/react-virtual": "^3.0.0",
     "chart.js": "^4.4.0",
     "class-variance-authority": "^0.7.0",

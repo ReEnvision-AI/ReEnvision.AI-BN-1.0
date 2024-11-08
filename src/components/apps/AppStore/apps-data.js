@@ -8,12 +8,13 @@ import { Calculator as CalculatorApp } from '../Calculator';
 import { Terminal as TerminalApp } from '../Terminal';
 import { Settings as SettingsApp } from '../Settings/Settings';
 import { AppStore } from './AppStore';
-import { AIDevStudio } from '../AIDevStudio/AIDevStudio';
+//import { AIDevStudio } from '../AIDevStudio/AIDevStudio';
 import { Prez } from '../Prez/Prez';
 import { LocalAI } from '../LocalAI/LocalAI';
 import { ChatyAI } from '../ChatyAI/ChatyAI';
 import { SalesFlow } from '../SalesFlow/SalesFlow';
 import { AIBrowser } from '@reai/aibrowser';
+import { AIDevStudio } from '@reai/aidevstudio';
 
 export const AVAILABLE_APPS = [
   {
