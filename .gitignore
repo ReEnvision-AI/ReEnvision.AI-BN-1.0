@@ -1,9 +1,9 @@
 .swp
 .tern-*
 node_modules
-/packages.json
 /sessions
 /.env*
 /session-store.db
 dist
 .DS_Store
+package-lock.json
