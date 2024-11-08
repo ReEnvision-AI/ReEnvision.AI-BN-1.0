@@ -1,19 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  FileText, Calculator, Settings, Terminal, Store,
-  FolderOpen, Cpu, Table, Presentation, MessageSquare, Brain 
-} from 'lucide-react';
-import { TextPad } from '../components/apps/TextPad';
-import { Calculator as CalculatorApp } from '../components/apps/Calculator';
-import { Settings as SettingsApp } from '../components/apps/Settings/Settings';
-import { Terminal as TerminalApp } from '../components/apps/Terminal';
-import { AppStore } from '../components/apps/AppStore/AppStore';
-import { FileManager } from '../components/apps/FileManager/FileManager';
-import { AIDevStudio } from '../components/apps/AIDevStudio/AIDevStudio';
-import { DataGrid } from '../components/apps/DataGrid/DataGrid';
-import { Prez } from '../components/apps/Prez/Prez';
-import { ChatyAI } from '../components/apps/ChatyAI/ChatyAI';
-import { LocalAI } from '../components/apps/LocalAI/LocalAI';
+import { defaultApps } from '../data/defaultApps';
 
 const AppContext = createContext(null);
 
@@ -27,108 +13,6 @@ const defaultSettings = {
   iconColor: '#FFFFFF'
 };
 
-const defaultApps = [
-  {
-    id: 'chatyai',
-    name: 'Chaty AI',
-    icon: MessageSquare,
-    component: ChatyAI,
-    width: 1200,
-    height: 800,
-    canUninstall: true
-  },
-  {
-    id: 'localai',
-    name: 'Local AI',
-    icon: Brain,
-    component: LocalAI,
-    width: 1200,
-    height: 800,
-    canUninstall: true
-  },
-  {
-    id: 'textpad',
-    name: 'TextPad',
-    icon: FileText,
-    component: TextPad,
-    width: 600,
-    height: 400,
-    canUninstall: true
-  },
-  {
-    id: 'calculator',
-    name: 'Calculator',
-    icon: Calculator,
-    component: CalculatorApp,
-    width: 320,
-    height: 480,
-    canUninstall: true
-  },
-  {
-    id: 'settings',
-    name: 'Settings',
-    icon: Settings,
-    component: SettingsApp,
-    width: 800,
-    height: 600,
-    canUninstall: false
-  },
-  {
-    id: 'terminal',
-    name: 'Terminal',
-    icon: Terminal,
-    component: TerminalApp,
-    width: 600,
-    height: 400,
-    canUninstall: true
-  },
-  {
-    id: 'appstore',
-    name: 'App Store',
-    icon: Store,
-    component: AppStore,
-    width: 900,
-    height: 600,
-    canUninstall: false
-  },
-  {
-    id: 'files',
-    name: 'Files',
-    icon: FolderOpen,
-    component: FileManager,
-    width: 800,
-    height: 600,
-    canUninstall: false
-  },
-  {
-    id: 'aidevstudio',
-    name: 'AI Dev Studio',
-    icon: Cpu,
-    component: AIDevStudio,
-    width: 1200,
-    height: 800,
-    canUninstall: true
-  },
-  {
-    id: 'datagrid',
-    name: 'DataGrid',
-    icon: Table,
-    component: DataGrid,
-    width: 1200,
-    height: 800,
-    canUninstall: true
-  },
-  {
-    id: 'prez',
-    name: 'Prez',
-    icon: Presentation,
-    component: Prez,
-    width: 1200,
-    height: 800,
-    canUninstall: true
-  }
-];
-
 export function AppContextProvider({ children }) {
   const [settings, setSettings] = useState(() => {
     const saved = localStorage.getItem('settings');
@@ -138,29 +22,21 @@ export function AppContextProvider({ children }) {
   const [installedApps, setInstalledApps] = useState(() => {
     const saved = localStorage.getItem('installedApps');
     return saved ? JSON.parse(saved) : [
+      'aibrowser',
       'chatyai',
       'localai',
       'textpad',
       'calculator',
       'terminal',
       'aidevstudio',
-      'datagrid',
-      'prez'
+      'prez',
+      'salesflow'
     ];
   });
 
-  const [files, setFiles] = useState(() => {
-    const saved = localStorage.getItem('files');
-    return saved ? JSON.parse(saved) : {
-      'home': {
-        'demo': {
-          'Documents': {},
-          'Pictures': {},
-          'Music': {},
-          'Downloads': {}
-        }
-      }
-    };
+  const [apps, setApps] = useState(() => {
+    const saved = localStorage.getItem('apps');
+    return saved ? JSON.parse(saved) : defaultApps;
   });
 
   useEffect(() => {
@@ -172,28 +48,73 @@ export function AppContextProvider({ children }) {
   }, [installedApps]);
 
   useEffect(() => {
-    localStorage.setItem('files', JSON.stringify(files));
-  }, [files]);
+    localStorage.setItem('apps', JSON.stringify(apps));
+  }, [apps]);
 
   const updateSetting = (key, value) => {
     setSettings(prev => ({ ...prev, [key]: value }));
   };
 
-  const installApp = (appId) => {
-    setInstalledApps(prev => [...new Set([...prev, appId])]);
+  const installApp = async (appId, appRegistration, appFiles) => {
+    try {
+      // Store app files in localStorage
+      Object.entries(appFiles).forEach(([path, content]) => {
+        localStorage.setItem(`app_file:${path}`, content);
+      });
+
+      // Load the app's component dynamically
+      const componentPath = `/apps/${appId}/${appRegistration.component}`;
+      const componentContent = localStorage.getItem(`app_file:${componentPath}`);
+      if (!componentContent) {
+        throw new Error('Component file not found');
+      }
+
+      // Register app in the system
+      const newApps = [...apps, appRegistration];
+      localStorage.setItem('apps', JSON.stringify(newApps));
+      setApps(newApps);
+
+      // Add to installed apps list
+      const newInstalledApps = [...installedApps, appId];
+      localStorage.setItem('installedApps', JSON.stringify(newInstalledApps));
+      setInstalledApps(newInstalledApps);
+
+    } catch (error) {
+      console.error('Failed to install app:', error);
+      throw new Error('Failed to install application');
+    }
   };
 
   const uninstallApp = (appId) => {
-    setInstalledApps(prev => prev.filter(id => id !== appId));
+    // Remove app files from localStorage
+    const prefix = `app_file:/apps/${appId}/`;
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith(prefix)) {
+        localStorage.removeItem(key);
+      }
+    });
+
+    // Remove from apps list
+    const newApps = apps.filter(app => app.id !== appId);
+    localStorage.setItem('apps', JSON.stringify(newApps));
+    setApps(newApps);
+
+    // Remove from installed apps
+    const newInstalledApps = installedApps.filter(id => id !== appId);
+    localStorage.setItem('installedApps', JSON.stringify(newInstalledApps));
+    setInstalledApps(newInstalledApps);
   };
 
-  const getAppById = (id) => {
-    return defaultApps.find(app => app.id === id);
+  const getAppFiles = (appId) => {
+    const files = {};
+    const prefix = `app_file:/apps/${appId}/`;
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith(prefix)) {
+        files[key.replace(prefix, '')] = localStorage.getItem(key);
+      }
+    });
+    return files;
   };
-
-  const apps = defaultApps.filter(app => 
-    !app.canUninstall || installedApps.includes(app.id)
-  );
 
   const value = {
     settings,
@@ -202,9 +123,8 @@ export function AppContextProvider({ children }) {
     installApp,
     uninstallApp,
     apps,
-    getAppById,
-    files,
-    setFiles
+    getAppFiles,
+    getAppById: (id) => apps.find(app => app.id === id)
   };
 
   return (

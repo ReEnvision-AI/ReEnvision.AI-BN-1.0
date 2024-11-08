@@ -1,15 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Rnd } from 'react-rnd';
+import { defaultApps } from '../../data/defaultApps';
 
 export function Desktop({ children, windows, setWindows }) {
-  const { settings, apps } = useApp();
+  const { settings, installedApps } = useApp();
   const [iconPositions, setIconPositions] = useState({});
   const [contextMenu, setContextMenu] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
   const [touchStartTime, setTouchStartTime] = useState(0);
 
-  // Memoize grid and icon size calculations
   const gridSize = settings.gridEnabled ? (settings.gridSpacing || 20) : 1;
   const iconSize = {
     small: { width: 64, height: 80 },
@@ -17,38 +17,56 @@ export function Desktop({ children, windows, setWindows }) {
     large: { width: 96, height: 112 }
   }[settings.iconSize || 'medium'];
 
-  // Memoize the layout calculation function
-  const calculateLayout = useCallback(() => {
-    const columns = Math.floor(window.innerWidth / (iconSize.width + gridSize));
+  const calculateGridLayout = useCallback(() => {
+    const columns = Math.floor((window.innerWidth - gridSize) / (iconSize.width + gridSize));
+    const maxY = window.innerHeight - 100;
     const newPositions = {};
     
-    apps.forEach((app, index) => {
+    const occupiedPositions = new Set(
+      Object.entries(iconPositions)
+        .map(([id, pos]) => `${pos.x},${pos.y}`)
+    );
+
+    defaultApps.forEach((app) => {
       if (!iconPositions[app.id]) {
-        const row = Math.floor(index / columns);
-        const col = index % columns;
-        
-        newPositions[app.id] = {
-          x: col * (iconSize.width + gridSize) + gridSize,
-          y: row * (iconSize.height + gridSize) + gridSize
-        };
+        let row = 0;
+        let col = 0;
+        let position;
+
+        while (true) {
+          const x = col * (iconSize.width + gridSize) + gridSize;
+          const y = row * (iconSize.height + gridSize) + gridSize;
+
+          if (y + iconSize.height <= maxY && !occupiedPositions.has(`${x},${y}`)) {
+            position = { x, y };
+            occupiedPositions.add(`${x},${y}`);
+            break;
+          }
+
+          col++;
+          if (col >= columns) {
+            col = 0;
+            row++;
+          }
+        }
+
+        newPositions[app.id] = position;
       }
     });
 
     return newPositions;
-  }, [apps, gridSize, iconSize.width, iconSize.height, iconPositions]);
+  }, [defaultApps, gridSize, iconSize, iconPositions]);
 
-  // Initialize icon positions
   useEffect(() => {
-    const newPositions = calculateLayout();
+    const newPositions = calculateGridLayout();
     if (Object.keys(newPositions).length > 0) {
       setIconPositions(prev => ({
         ...prev,
         ...newPositions
       }));
     }
-  }, [calculateLayout]);
+  }, [calculateGridLayout]);
 
-  // Handle window resize
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 640);
@@ -60,11 +78,12 @@ export function Desktop({ children, windows, setWindows }) {
 
   const handleIconMove = useCallback((id, position) => {
     if (settings.gridEnabled) {
-      const x = Math.round(position.x / gridSize) * gridSize;
-      const y = Math.round(position.y / gridSize) * gridSize;
+      const columns = Math.floor((window.innerWidth - gridSize) / (iconSize.width + gridSize));
+      const x = Math.round(position.x / (iconSize.width + gridSize)) * (iconSize.width + gridSize) + gridSize;
+      const y = Math.round(position.y / (iconSize.height + gridSize)) * (iconSize.height + gridSize) + gridSize;
 
-      const maxX = window.innerWidth - iconSize.width - gridSize;
-      const maxY = window.innerHeight - iconSize.height - gridSize;
+      const maxX = columns * (iconSize.width + gridSize);
+      const maxY = window.innerHeight - iconSize.height - gridSize - 100;
       const boundedX = Math.max(gridSize, Math.min(x, maxX));
       const boundedY = Math.max(gridSize, Math.min(y, maxY));
 
@@ -95,11 +114,9 @@ export function Desktop({ children, windows, setWindows }) {
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
     
-    // Calculate centered position
     const x = Math.max(0, Math.min((screenWidth - app.width) / 2, screenWidth - app.width));
     const y = Math.max(0, Math.min((screenHeight - app.height) / 2, screenHeight - app.height));
     
-    // Ensure window fits within screen bounds
     const width = Math.min(app.width || 600, screenWidth * 0.9);
     const height = Math.min(app.height || 400, screenHeight * 0.9);
 
@@ -127,6 +144,10 @@ export function Desktop({ children, windows, setWindows }) {
     e.preventDefault();
   }, [touchStartTime, openApp]);
 
+  const visibleApps = defaultApps.filter(app => 
+    app.permanent || installedApps?.includes(app.id)
+  );
+
   return (
     <div 
       className="absolute inset-0 pb-16 pt-safe overflow-hidden"
@@ -139,13 +160,13 @@ export function Desktop({ children, windows, setWindows }) {
       }}
       onClick={() => contextMenu && setContextMenu(null)}
     >
-      {apps.map((app) => (
+      {visibleApps.map((app) => (
         <Rnd
           key={app.id}
           position={iconPositions[app.id] || { x: gridSize, y: gridSize }}
           size={iconSize}
           onDragStop={(e, d) => handleIconMove(app.id, { x: d.x, y: d.y })}
-          dragGrid={settings.gridEnabled ? [gridSize, gridSize] : [1, 1]}
+          dragGrid={settings.gridEnabled ? [iconSize.width + gridSize, iconSize.height + gridSize] : [1, 1]}
           bounds="parent"
           enableResizing={false}
           className="touch-none"
@@ -153,7 +174,7 @@ export function Desktop({ children, windows, setWindows }) {
           <div
             className={`
               flex flex-col items-center justify-center p-2 rounded-lg
-              hover:bg-white/10 active:bg-white/20 transition-colors
+              hover:bg-white/10 active:bg-white/20 transition-colors cursor-default
               ${isMobile ? 'scale-mobile touch-feedback' : ''}
             `}
             onDoubleClick={() => openApp(app)}

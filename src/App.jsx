@@ -4,6 +4,7 @@ import { Desktop } from './components/Desktop/Desktop';
 import { TaskBar } from './components/TaskBar/TaskBar';
 import { WindowManager } from './components/WindowManager';
 import { AppContextProvider } from './context/AppContext';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -77,6 +78,21 @@ function App() {
           />
         </div>
       )}
+      <Toaster 
+        position="bottom-right"
+        toastOptions={{
+          style: {
+            background: '#333',
+            color: '#fff',
+          },
+          success: {
+            duration: 3000,
+          },
+          error: {
+            duration: 4000,
+          },
+        }}
+      />
     </AppContextProvider>
   );
 }

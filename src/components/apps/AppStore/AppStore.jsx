@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { Search, Download, Trash2, Package, RefreshCw } from 'lucide-react';
+import { Search, Download, Trash2, Package, RefreshCw, Upload } from 'lucide-react';
 import { useApp } from '../../../context/AppContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AVAILABLE_APPS } from './apps-data';
+import { AppImport } from './AppImport';
 
 export function AppStore() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [installing, setInstalling] = useState({});
+  const [showImport, setShowImport] = useState(false);
   const { installedApps, installApp, uninstallApp } = useApp();
 
   const categories = [
@@ -25,11 +27,6 @@ export function AppStore() {
   });
 
   const handleInstall = async (app) => {
-    if (app.id === 'settings' || app.id === 'appstore') {
-      alert('This app cannot be uninstalled');
-      return;
-    }
-
     try {
       setInstalling(prev => ({ ...prev, [app.id]: 'installing' }));
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -52,7 +49,6 @@ export function AppStore() {
       alert('This app cannot be uninstalled');
       return;
     }
-
     try {
       setInstalling(prev => ({ ...prev, [app.id]: 'uninstalling' }));
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -76,8 +72,7 @@ export function AppStore() {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Fixed header */}
-      <div className="flex-none flex items-center gap-4 p-4 bg-gray-800/50 border-b border-gray-700">
+      <div className="flex-none flex items-center gap-4 p-4 bg-gray-800/50">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
@@ -99,9 +94,15 @@ export function AppStore() {
             </option>
           ))}
         </select>
+        <button
+          onClick={() => setShowImport(true)}
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2"
+        >
+          <Upload className="w-4 h-4" />
+          Import App
+        </button>
       </div>
 
-      {/* Scrollable content */}
       <div className="flex-1 overflow-y-auto overscroll-contain p-4 scroll-smooth">
         <AnimatePresence>
           <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
@@ -193,6 +194,8 @@ export function AppStore() {
           </div>
         </AnimatePresence>
       </div>
+
+      {showImport && <AppImport onClose={() => setShowImport(false)} />}
     </div>
   );
 }
