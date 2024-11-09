@@ -3,7 +3,7 @@ import {
   Cpu, FolderOpen, Presentation, MessageSquare, Brain, 
   LayoutDashboard, Globe 
 } from 'lucide-react';
-import { TextPad } from '../components/apps/TextPad';
+//import { TextPad } from '../components/apps/TextPad';
 //import { Calculator as CalculatorApp } from '../components/apps/Calculator';
 import { Settings as SettingsApp } from '../components/apps/Settings/Settings';
 //import { Terminal as TerminalApp } from '../components/apps/Terminal';
@@ -23,6 +23,7 @@ import { Prez, PrezManifest } from '@reai/prez';
 import { SalesFlow } from '@reai/salesflow';
 import { Calculator as CalculatorApp } from '@reai/calculator';
 import { Terminal as TerminalApp } from '@reai/terminal';
+import { TextPad } from '@reai/textpad';
 
 export const defaultApps = [
   {

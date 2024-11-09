@@ -3,7 +3,7 @@ import {
   Globe, Database, Package, Wand2, Cpu, Presentation,
   MessageSquare, Brain, LayoutDashboard
 } from 'lucide-react';
-import { TextPad } from '../TextPad';
+//import { TextPad } from '../TextPad';
 //import { Calculator as CalculatorApp } from '../Calculator';
 //import { Terminal as TerminalApp } from '../Terminal';
 import { Settings as SettingsApp } from '../Settings/Settings';
@@ -19,7 +19,8 @@ import { Prez } from '@reai/prez';
 import { SalesFlow } from '@reai/salesflow';
 import { Calculator as CalculatorApp } from '@reai/calculator';
 import { Terminal as TerminalApp } from '@reai/terminal';
-
+import { TextPad } from '@reai/textpad';
+ 
 export const AVAILABLE_APPS = [
   {
     id: 'aibrowser',
