@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { TextPad } from '../TextPad';
 //import { Calculator as CalculatorApp } from '../Calculator';
-import { Terminal as TerminalApp } from '../Terminal';
+//import { Terminal as TerminalApp } from '../Terminal';
 import { Settings as SettingsApp } from '../Settings/Settings';
 import { AppStore } from './AppStore';
 //import { Prez } from '../Prez/Prez';
@@ -18,6 +18,7 @@ import { LocalAI } from '@reai/locali';
 import { Prez } from '@reai/prez';
 import { SalesFlow } from '@reai/salesflow';
 import { Calculator as CalculatorApp } from '@reai/calculator';
+import { Terminal as TerminalApp } from '@reai/terminal';
 
 export const AVAILABLE_APPS = [
   {

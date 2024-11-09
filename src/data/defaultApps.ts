@@ -6,7 +6,7 @@ import {
 import { TextPad } from '../components/apps/TextPad';
 //import { Calculator as CalculatorApp } from '../components/apps/Calculator';
 import { Settings as SettingsApp } from '../components/apps/Settings/Settings';
-import { Terminal as TerminalApp } from '../components/apps/Terminal';
+//import { Terminal as TerminalApp } from '../components/apps/Terminal';
 import { AppStore } from '../components/apps/AppStore/AppStore';
 import { FileManager } from '../components/apps/FileManager/FileManager';
 //import { AIDevStudio } from '../components/apps/AIDevStudio/AIDevStudio';
@@ -22,6 +22,7 @@ import { LocalAI } from '@reai/locali';
 import { Prez, PrezManifest } from '@reai/prez';
 import { SalesFlow } from '@reai/salesflow';
 import { Calculator as CalculatorApp } from '@reai/calculator';
+import { Terminal as TerminalApp } from '@reai/terminal';
 
 export const defaultApps = [
   {
