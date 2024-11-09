@@ -4,7 +4,7 @@ import {
   MessageSquare, Brain, LayoutDashboard
 } from 'lucide-react';
 import { TextPad } from '../TextPad';
-import { Calculator as CalculatorApp } from '../Calculator';
+//import { Calculator as CalculatorApp } from '../Calculator';
 import { Terminal as TerminalApp } from '../Terminal';
 import { Settings as SettingsApp } from '../Settings/Settings';
 import { AppStore } from './AppStore';
@@ -17,6 +17,7 @@ import { ChattyAI } from '@reai/chattyai';
 import { LocalAI } from '@reai/locali';
 import { Prez } from '@reai/prez';
 import { SalesFlow } from '@reai/salesflow';
+import { Calculator as CalculatorApp } from '@reai/calculator';
 
 export const AVAILABLE_APPS = [
   {
