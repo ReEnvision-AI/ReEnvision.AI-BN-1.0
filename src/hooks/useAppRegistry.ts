@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AppRegistry } from '../services/appRegistry';
-import { AppInfo, AppState } from '../types/apps';
+//import { AppInfo, AppState } from '../types/apps';
+import { AppInfo, AppState } from '@reai/types';
 
 export function useAppRegistry() {
   const registry = AppRegistry.getInstance();

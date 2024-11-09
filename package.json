@@ -17,6 +17,15 @@
     "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "^1.0.4",
+    "@reai/aibrowser": "github:ReEnvision-AI/aibrowser",
+    "@reai/aidevstudio": "github:ReEnvision-AI/aidevstudio",
+    "@reai/calculator": "github:ReEnvision-AI/calculator",
+    "@reai/chattyai": "github:ReEnvision-AI/chattyai",
+    "@reai/locali": "github:ReEnvision-AI/localai",
+    "@reai/prez": "github:ReEnvision-AI/prez",
+    "@reai/salesflow": "github:ReEnvision-AI/salesflow",
+    "@reai/terminal": "github:ReEnvision-AI/terminal",
+    "@reai/textpad": "github:ReEnvision-AI/textpad",
     "@tanstack/react-virtual": "^3.0.0",
     "chart.js": "^4.4.0",
     "class-variance-authority": "^0.7.0",
@@ -36,6 +45,7 @@
     "zustand": "^4.4.1"
   },
   "devDependencies": {
+    "@reai/types": "github:ReEnvision-AI/types",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",

@@ -3,18 +3,24 @@ import {
   Globe, Database, Package, Wand2, Cpu, Presentation,
   MessageSquare, Brain, LayoutDashboard
 } from 'lucide-react';
-import { TextPad } from '../TextPad';
-import { Calculator as CalculatorApp } from '../Calculator';
-import { Terminal as TerminalApp } from '../Terminal';
+//import { TextPad } from '../TextPad';
+//import { Calculator as CalculatorApp } from '../Calculator';
+//import { Terminal as TerminalApp } from '../Terminal';
 import { Settings as SettingsApp } from '../Settings/Settings';
 import { AppStore } from './AppStore';
-import { AIDevStudio } from '../AIDevStudio/AIDevStudio';
-import { Prez } from '../Prez/Prez';
-import { LocalAI } from '../LocalAI/LocalAI';
-import { ChatyAI } from '../ChatyAI/ChatyAI';
-import { SalesFlow } from '../SalesFlow/SalesFlow';
-import { AIBrowser } from '../AIBrowser/AIBrowser';
-
+//import { Prez } from '../Prez/Prez';
+//import { LocalAI } from '../LocalAI/LocalAI';
+//import { SalesFlow } from '../SalesFlow/SalesFlow';
+import { AIBrowser } from '@reai/aibrowser';
+import { AIDevStudio } from '@reai/aidevstudio';
+import { ChattyAI } from '@reai/chattyai';
+import { LocalAI } from '@reai/locali';
+import { Prez } from '@reai/prez';
+import { SalesFlow } from '@reai/salesflow';
+import { Calculator as CalculatorApp } from '@reai/calculator';
+import { Terminal as TerminalApp } from '@reai/terminal';
+import { TextPad } from '@reai/textpad';
+ 
 export const AVAILABLE_APPS = [
   {
     id: 'aibrowser',
@@ -75,11 +81,11 @@ export const AVAILABLE_APPS = [
     }
   },
   {
-    id: 'chatyai',
-    name: 'Chaty AI',
+    id: 'chattyai',
+    name: 'Chatty AI',
     description: 'Local LLM inference engine with chat interface',
     icon: MessageSquare,
-    component: ChatyAI,
+    component: ChattyAI,
     category: 'development',
     version: '1.0.0',
     author: 'StackBlitz',

@@ -3,19 +3,27 @@ import {
   Cpu, FolderOpen, Presentation, MessageSquare, Brain, 
   LayoutDashboard, Globe 
 } from 'lucide-react';
-import { TextPad } from '../components/apps/TextPad';
-import { Calculator as CalculatorApp } from '../components/apps/Calculator';
+//import { TextPad } from '../components/apps/TextPad';
+//import { Calculator as CalculatorApp } from '../components/apps/Calculator';
 import { Settings as SettingsApp } from '../components/apps/Settings/Settings';
-import { Terminal as TerminalApp } from '../components/apps/Terminal';
+//import { Terminal as TerminalApp } from '../components/apps/Terminal';
 import { AppStore } from '../components/apps/AppStore/AppStore';
 import { FileManager } from '../components/apps/FileManager/FileManager';
-import { AIDevStudio } from '../components/apps/AIDevStudio/AIDevStudio';
-import { Prez } from '../components/apps/Prez/Prez';
-import { PrezManifest } from '../components/apps/Prez/manifest';
-import { LocalAI } from '../components/apps/LocalAI/LocalAI';
-import { ChatyAI } from '../components/apps/ChatyAI/ChatyAI';
-import { SalesFlow } from '../components/apps/SalesFlow/SalesFlow';
-import { AIBrowser } from '../components/apps/AIBrowser/AIBrowser';
+//import { AIDevStudio } from '../components/apps/AIDevStudio/AIDevStudio';
+//import { Prez } from '../components/apps/Prez/Prez';
+//import { PrezManifest } from '../components/apps/Prez/manifest';
+//import { LocalAI } from '../components/apps/LocalAI/LocalAI';
+//import { ChatyAI } from '../components/apps/ChatyAI/ChatyAI';
+//import { SalesFlow } from '../components/apps/SalesFlow/SalesFlow';
+import { AIBrowser } from '@reai/aibrowser';
+import { AIDevStudio } from '@reai/aidevstudio';
+import { ChattyAI } from '@reai/chattyai';
+import { LocalAI } from '@reai/locali';
+import { Prez, PrezManifest } from '@reai/prez';
+import { SalesFlow } from '@reai/salesflow';
+import { Calculator as CalculatorApp } from '@reai/calculator';
+import { Terminal as TerminalApp } from '@reai/terminal';
+import { TextPad } from '@reai/textpad';
 
 export const defaultApps = [
   {
@@ -100,11 +108,11 @@ export const defaultApps = [
     }
   },
   {
-    id: 'chatyai',
-    name: 'Chaty AI',
+    id: 'chattyai',
+    name: 'Chatty AI',
     description: 'Local LLM inference engine with chat interface',
     icon: MessageSquare,
-    component: ChatyAI,
+    component: ChattyAI,
     category: 'development',
     version: '1.0.0',
     author: 'StackBlitz',
