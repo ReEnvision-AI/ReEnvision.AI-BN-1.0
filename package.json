@@ -21,7 +21,7 @@
     "@reai/aidevstudio": "github:ReEnvision-AI/aidevstudio",
     "@reai/calculator": "github:ReEnvision-AI/calculator",
     "@reai/chattyai": "github:ReEnvision-AI/chattyai",
-    "@reai/locali": "github:ReEnvision-AI/localai",
+    "@reai/localai": "github:ReEnvision-AI/localai",
     "@reai/prez": "github:ReEnvision-AI/prez",
     "@reai/salesflow": "github:ReEnvision-AI/salesflow",
     "@reai/terminal": "github:ReEnvision-AI/terminal",
@@ -58,5 +58,6 @@
     "tailwindcss": "^3.3.3",
     "typescript": "^5.0.0",
     "vite": "^4.4.5"
-  }
+  },
+  "packageManager": "pnpm@9.7.0+sha512.dc09430156b427f5ecfc79888899e1c39d2d690f004be70e05230b72cb173d96839587545d09429b55ac3c429c801b4dc3c0e002f653830a420fa2dd4e3cf9cf"
 }

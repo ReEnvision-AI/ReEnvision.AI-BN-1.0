@@ -5,6 +5,7 @@ import { TaskBar } from './components/TaskBar/TaskBar';
 import { WindowManager } from './components/WindowManager';
 import { AppContextProvider } from './context/AppContext';
 import { Toaster } from 'react-hot-toast';
+import { Suspense } from 'react';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -68,7 +69,9 @@ function App() {
         <div className="h-screen w-screen overflow-hidden bg-gray-900 flex flex-col">
           <div className="flex-1 relative overflow-hidden">
             <Desktop windows={windows} setWindows={setWindows}>
+            <Suspense fallback={<></>}>
               <WindowManager windows={windows} setWindows={setWindows} />
+              </Suspense>
             </Desktop>
           </div>
           <TaskBar 
