@@ -9,8 +9,8 @@ export function AccountSettings({ username, onUsernameChange }) {
 
   const handleUsernameSubmit = (e) => {
     e.preventDefault();
-    if (username.trim()) {
-      onUsernameChange(username.trim());
+    if (e.target[0]?.value.trim()) {
+      onUsernameChange(e.target[0].value.trim());
       setSuccess('Username updated successfully');
       setTimeout(() => setSuccess(''), 3000);
     }
@@ -55,8 +55,8 @@ export function AccountSettings({ username, onUsernameChange }) {
             </label>
             <input
               type="text"
-              value={username}
-              onChange={(e) => onUsernameChange(e.target.value)}
+              defaultValue={username}
+              //onChange={(e) => onUsernameChange(e.target.value)}
               className="w-full px-3 py-2 bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>

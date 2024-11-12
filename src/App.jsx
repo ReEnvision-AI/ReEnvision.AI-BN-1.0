@@ -10,6 +10,7 @@ import { Suspense } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
+import { UserSettingsContextProvider } from './context/UserSettingsContext';
 
 const supabase = createClient(import.meta.env.VITE_SUPA_URL, import.meta.env.VITE_SUPA_PUBLIC_KEY)
 
@@ -76,9 +77,11 @@ function App() {
         <div className="h-screen w-screen overflow-hidden bg-gray-900 flex flex-col">
           <div className="flex-1 relative overflow-hidden">
             <Suspense fallback={<></>}>
-              <Desktop windows={windows} setWindows={setWindows}>
-                <WindowManager windows={windows} setWindows={setWindows} />
-              </Desktop>
+              <UserSettingsContextProvider>
+                <Desktop windows={windows} setWindows={setWindows}>
+                  <WindowManager windows={windows} setWindows={setWindows} />
+                </Desktop>
+              </UserSettingsContextProvider>
             </Suspense>
           </div>
           <TaskBar 

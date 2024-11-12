@@ -2,10 +2,12 @@ import { useState } from 'react';
 //import { useApp } from '../../../context/AppContext';
 import { AccountSettings } from './AccountSettings';
 import { AppearanceSettings } from './AppearanceSettings';
+import { useUserSettings } from '../../../context/UserSettingsContext';
 
 export function Settings() {
   //const { settings, updateSetting } = useApp();
-  const { settings, updateSetting } = useState({})
+  //const { settings, updateSetting } = useState({})
+  const {settings, theme, setTheme, setWallpaper, setIconColor, username, setUsername} = useUserSettings();
   const [activeTab, setActiveTab] = useState('appearance');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -16,27 +18,30 @@ export function Settings() {
   ];
 
   const handleThemeChange = (theme) => {
-    updateSetting('theme', theme);
+    //updateSetting('theme', theme);
+    setTheme(theme);
     setSuccess('Theme updated successfully');
     setTimeout(() => setSuccess(''), 3000);
   };
 
   const handleWallpaperChange = (wallpaper) => {
-    updateSetting('wallpaper', wallpaper);
+    //updateSetting('wallpaper', wallpaper);
+    setWallpaper(wallpaper);
     setSuccess('Wallpaper updated successfully');
     setTimeout(() => setSuccess(''), 3000);
   };
 
   const handleIconColorChange = (iconColor) => {
-    updateSetting('iconColor', iconColor);
+    //updateSetting('iconColor', iconColor);
+    setIconColor(iconColor);
     setSuccess('Icon color updated successfully');
     setTimeout(() => setSuccess(''), 3000);
   };
 
   const handleGridSettingsChange = (settings) => {
-    Object.entries(settings).forEach(([key, value]) => {
-      updateSetting(key, value);
-    });
+    //Object.entries(settings).forEach(([key, value]) => {
+    //  updateSetting(key, value);
+    //});
     setSuccess('Desktop settings updated successfully');
     setTimeout(() => setSuccess(''), 3000);
   };
@@ -46,7 +51,7 @@ export function Settings() {
       setError('Username cannot be empty');
       return;
     }
-    updateSetting('username', username.trim());
+    setUsername(username);
     setSuccess('Username updated successfully');
     setError('');
     setTimeout(() => setSuccess(''), 3000);
@@ -98,6 +103,7 @@ export function Settings() {
         {activeTab === 'account' && (
           <AccountSettings 
             //username={settings.username}
+            username={username()}
             onUsernameChange={handleUsernameChange}
           />
         )}
