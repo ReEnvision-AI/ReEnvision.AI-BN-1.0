@@ -9,7 +9,7 @@ import { AppStore } from './apps/AppStore';
 
 export function TaskBar({ windows, setWindows, onLogout }) {
   const [startOpen, setStartOpen] = useState(false);
-  const { settings, installedApps } = useApp();
+  const { installedApps, setInstalledApps, uninstallApp, installApp, availableApps } = useApp();
 
   const defaultApps = [
     { 
@@ -54,11 +54,11 @@ export function TaskBar({ windows, setWindows, onLogout }) {
     }
   ];
 
-  const availableApps = defaultApps.filter(app => 
-    app.id === 'settings' || 
-    app.id === 'appstore' || 
-    installedApps?.includes(app.id)
-  );
+  //const availableApps = defaultApps.filter(app => 
+  //  app.id === 'settings' || 
+  //  app.id === 'appstore' || 
+  //  installedApps?.includes(app.id)
+  //);
 
   const launchApp = (app) => {
     setWindows(prev => [...prev, {
@@ -152,7 +152,7 @@ export function TaskBar({ windows, setWindows, onLogout }) {
         </div>
 
         <div className="flex items-center gap-2 px-2">
-          <span className="text-white/50 text-sm">{settings.username}</span>
+          <span className="text-white/50 text-sm">TODO Name Goes Here</span>
           <div 
             className="cursor-pointer"
             onClick={onLogout}

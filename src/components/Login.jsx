@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { KeyRound, Eye, EyeOff, AlertCircle } from 'lucide-react';
-import { useApp } from '../context/AppContext';
 import { NeuralAnimation } from './NeuralAnimation';
 
 export function Login({ onLogin }) {
@@ -9,7 +8,6 @@ export function Login({ onLogin }) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { settings } = useApp();
 
   const handleSubmit = async (e) => {
     e.preventDefault();

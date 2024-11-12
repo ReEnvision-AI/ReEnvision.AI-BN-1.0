@@ -37,13 +37,21 @@ const BACKGROUND_PRESETS = {
 };
 
 export function DesktopSettings() {
-  const { settings, updateSetting } = useApp();
+  /*const { settings, updateSetting } = useApp();
   const [tempSettings, setTempSettings] = useState({
     gridEnabled: settings.gridEnabled ?? true,
     gridSpacing: settings.gridSpacing || SPACING_PRESETS.comfortable,
     iconSize: settings.iconSize || 'medium',
     wallpaper: settings.wallpaper || BACKGROUND_PRESETS.gradients[0].value
-  });
+  });*/
+
+  // TODO: Update this to use real settings
+  const [tempSettings, setTempSettings] = useState({
+    gridEnabled: true,
+    gridSpacing: SPACING_PRESETS.comfortable,
+    iconSize: 'medium',
+    wallpaper: BACKGROUND_PRESETS.gradients[0].value
+  })
 
   const [hasChanges, setHasChanges] = useState(false);
 
@@ -56,13 +64,15 @@ export function DesktopSettings() {
     setHasChanges(changed);
   }, [tempSettings, settings]);
 
-  const handleApplyChanges = () => {
+
+  // TODO: Add this back but with real settings
+  /*const handleApplyChanges = () => {
     updateSetting('gridEnabled', tempSettings.gridEnabled);
     updateSetting('gridSpacing', tempSettings.gridSpacing);
     updateSetting('iconSize', tempSettings.iconSize);
     updateSetting('wallpaper', tempSettings.wallpaper);
     setHasChanges(false);
-  };
+  };*/
 
   return (
     <div className="space-y-8">

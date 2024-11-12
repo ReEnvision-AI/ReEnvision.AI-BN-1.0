@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useApp } from '../../../context/AppContext';
+//import { useApp } from '../../../context/AppContext';
 
 export function useFileSystem(path) {
   const [files, setFiles] = useState([]);
   const [directories, setDirectories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { files: fsFiles, setFiles: setFsFiles } = useApp();
+  //const { files: fsFiles, setFiles: setFsFiles } = useApp();
+  const [fsFiles, setFsFiles] = useState([]); /* TODO: CHANGE THIS */
 
   const refresh = async () => {
     try {

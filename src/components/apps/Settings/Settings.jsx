@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { useApp } from '../../../context/AppContext';
+//import { useApp } from '../../../context/AppContext';
 import { AccountSettings } from './AccountSettings';
 import { AppearanceSettings } from './AppearanceSettings';
 
 export function Settings() {
-  const { settings, updateSetting } = useApp();
+  //const { settings, updateSetting } = useApp();
+  const { settings, updateSetting } = useState({})
   const [activeTab, setActiveTab] = useState('appearance');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -96,7 +97,7 @@ export function Settings() {
 
         {activeTab === 'account' && (
           <AccountSettings 
-            username={settings.username}
+            //username={settings.username}
             onUsernameChange={handleUsernameChange}
           />
         )}

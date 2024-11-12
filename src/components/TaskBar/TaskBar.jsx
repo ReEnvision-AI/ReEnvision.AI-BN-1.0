@@ -6,7 +6,7 @@ import { StartMenu } from './StartMenu';
 
 export function TaskBar({ windows, setWindows, onLogout }) {
   const [startOpen, setStartOpen] = useState(false);
-  const { apps } = useApp();
+  const {installedApps} = useApp();
 
   const toggleWindow = (window) => {
     setWindows(prev => prev.map(w => 
@@ -72,7 +72,7 @@ export function TaskBar({ windows, setWindows, onLogout }) {
             onClick={() => setStartOpen(false)}
           />
           <StartMenu 
-            apps={apps}
+            apps={installedApps}
             onLaunchApp={(app) => {
               setWindows(prev => [...prev, {
                 id: Date.now(),

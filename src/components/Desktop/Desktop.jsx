@@ -4,18 +4,21 @@ import { Rnd } from 'react-rnd';
 import { defaultApps } from '../../data/defaultApps';
 
 export function Desktop({ children, windows, setWindows }) {
-  const { settings, installedApps } = useApp();
+  //const { settings, installedApps } = useApp();
+  const { installedApps } = useApp();
   const [iconPositions, setIconPositions] = useState({});
   const [contextMenu, setContextMenu] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
   const [touchStartTime, setTouchStartTime] = useState(0);
 
-  const gridSize = settings.gridEnabled ? (settings.gridSpacing || 20) : 1;
+  //const gridSize = settings.gridEnabled ? (settings.gridSpacing || 20) : 1;
+  const gridSize = 20;
   const iconSize = {
     small: { width: 64, height: 80 },
     medium: { width: 80, height: 96 },
     large: { width: 96, height: 112 }
-  }[settings.iconSize || 'medium'];
+  //}[settings.iconSize || 'medium'];
+  }['medium'];
 
   const calculateGridLayout = useCallback(() => {
     const columns = Math.floor((window.innerWidth - gridSize) / (iconSize.width + gridSize));
@@ -77,7 +80,8 @@ export function Desktop({ children, windows, setWindows }) {
   }, []);
 
   const handleIconMove = useCallback((id, position) => {
-    if (settings.gridEnabled) {
+    //if (settings.gridEnabled) {
+    if (true) {
       const columns = Math.floor((window.innerWidth - gridSize) / (iconSize.width + gridSize));
       const x = Math.round(position.x / (iconSize.width + gridSize)) * (iconSize.width + gridSize) + gridSize;
       const y = Math.round(position.y / (iconSize.height + gridSize)) * (iconSize.height + gridSize) + gridSize;
@@ -97,7 +101,7 @@ export function Desktop({ children, windows, setWindows }) {
         [id]: position
       }));
     }
-  }, [settings.gridEnabled, gridSize, iconSize.width, iconSize.height]);
+  }, [/*settings.gridEnabled, */ gridSize, iconSize.width, iconSize.height]);
 
   const handleContextMenu = useCallback((e, app) => {
     e.preventDefault();
@@ -145,14 +149,14 @@ export function Desktop({ children, windows, setWindows }) {
   }, [touchStartTime, openApp]);
 
   const visibleApps = defaultApps.filter(app => 
-    app.permanent || installedApps?.includes(app.id)
+    app.permanent || installedApps?.includes(app)
   );
 
   return (
     <div 
       className="absolute inset-0 pb-16 pt-safe overflow-hidden"
       style={{
-        background: settings.wallpaper,
+        //background: settings.wallpaper,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -166,7 +170,8 @@ export function Desktop({ children, windows, setWindows }) {
           position={iconPositions[app.id] || { x: gridSize, y: gridSize }}
           size={iconSize}
           onDragStop={(e, d) => handleIconMove(app.id, { x: d.x, y: d.y })}
-          dragGrid={settings.gridEnabled ? [iconSize.width + gridSize, iconSize.height + gridSize] : [1, 1]}
+          //dragGrid={settings.gridEnabled ? [iconSize.width + gridSize, iconSize.height + gridSize] : [1, 1]}
+          dragGrid={[iconSize.width + gridSize, iconSize.height + gridSize]}
           bounds="parent"
           enableResizing={false}
           className="touch-none"
@@ -187,7 +192,8 @@ export function Desktop({ children, windows, setWindows }) {
               style={{
                 width: iconSize.width * 0.5,
                 height: iconSize.width * 0.5,
-                color: settings.iconColor || '#FFFFFF'
+                //color: settings.iconColor || '#FFFFFF'
+                color: '#FFFFFF'
               }}
             />
             <span className={`

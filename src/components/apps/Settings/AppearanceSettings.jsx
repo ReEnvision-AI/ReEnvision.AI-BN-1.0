@@ -37,7 +37,7 @@ export function AppearanceSettings({ settings, onThemeChange, onWallpaperChange,
             onClick={() => onThemeChange('light')}
             className={`
               flex items-center gap-2 p-4 rounded-lg border-2 transition-colors
-              ${settings.theme === 'light'
+              ${settings?.theme && settings.theme === 'light'
                 ? 'border-blue-500 bg-blue-500/10'
                 : 'border-gray-700 hover:border-gray-600'}
             `}
@@ -50,7 +50,7 @@ export function AppearanceSettings({ settings, onThemeChange, onWallpaperChange,
             onClick={() => onThemeChange('dark')}
             className={`
               flex items-center gap-2 p-4 rounded-lg border-2 transition-colors
-              ${settings.theme === 'dark'
+              ${settings?.theme && settings.theme === 'dark'
                 ? 'border-blue-500 bg-blue-500/10'
                 : 'border-gray-700 hover:border-gray-600'}
             `}
@@ -69,7 +69,7 @@ export function AppearanceSettings({ settings, onThemeChange, onWallpaperChange,
             <Palette className="w-5 h-5 text-gray-400" />
             <input
               type="color"
-              value={settings.iconColor || '#FFFFFF'}
+              value={settings?.iconColor || '#FFFFFF'}
               onChange={(e) => onIconColorChange(e.target.value)}
               className="w-10 h-10 rounded cursor-pointer bg-transparent"
             />
@@ -90,7 +90,7 @@ export function AppearanceSettings({ settings, onThemeChange, onWallpaperChange,
                 onClick={() => onWallpaperChange(preset.value)}
                 className={`
                   relative p-4 rounded-lg border-2 transition-colors h-32
-                  ${settings.wallpaper === preset.value
+                  ${settings?.wallpaper && settings.wallpaper === preset.value
                     ? 'border-blue-500'
                     : 'border-gray-700 hover:border-gray-600'}
                 `}
@@ -113,7 +113,7 @@ export function AppearanceSettings({ settings, onThemeChange, onWallpaperChange,
                 onClick={() => onWallpaperChange(color.value)}
                 className={`
                   p-4 rounded-lg border-2 transition-colors
-                  ${settings.wallpaper === color.value
+                  ${settings?.wallpaper && settings.wallpaper === color.value
                     ? 'border-blue-500'
                     : 'border-gray-700 hover:border-gray-600'}
                 `}
@@ -139,28 +139,28 @@ export function AppearanceSettings({ settings, onThemeChange, onWallpaperChange,
               onClick={() => onGridSettingsChange({ gridEnabled: !settings.gridEnabled })}
               className={`
                 px-3 py-1 rounded-full text-sm font-medium transition-colors
-                ${settings.gridEnabled
+                ${settings?.gridEnabled
                   ? 'bg-blue-500/20 text-blue-300'
                   : 'bg-gray-700/50 text-gray-400'}
               `}
             >
-              {settings.gridEnabled ? 'Enabled' : 'Disabled'}
+              {settings?.gridEnabled ? 'Enabled' : 'Disabled'}
             </button>
           </div>
 
-          {settings.gridEnabled && (
+          {settings?.gridEnabled && (
             <div className="space-y-2">
               <label className="block text-sm text-gray-400">Grid Spacing</label>
               <input
                 type="range"
                 min="10"
                 max="50"
-                value={settings.gridSpacing || 20}
+                value={settings?.gridSpacing || 20}
                 onChange={(e) => onGridSettingsChange({ gridSpacing: parseInt(e.target.value) })}
                 className="w-full"
               />
               <div className="text-sm text-gray-500 text-right">
-                {settings.gridSpacing || 20}px
+                {settings?.gridSpacing || 20}px
               </div>
             </div>
           )}

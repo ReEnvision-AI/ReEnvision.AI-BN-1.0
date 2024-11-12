@@ -13,7 +13,8 @@ export function AppImport({ onClose }) {
   const [importError, setImportError] = useState(null);
   const [currentFile, setCurrentFile] = useState(null);
   const [fileList, setFileList] = useState(null);
-  const { installApp } = useApp();
+  //const { installApp } = useApp();
+  const { installedApps, setInstalledApps, uninstallApp, installApp, availableApps } = useApp();
 
   const validateManifest = (manifest) => {
     const requiredFields = [
@@ -161,7 +162,8 @@ export function AppImport({ onClose }) {
       };
 
       // Install the app
-      await installApp(manifest.id, appRegistration, appFiles);
+      //await installApp(manifest.id, appRegistration, appFiles);
+      // TODO: Update to properly use the install app command
       
       setImportProgress(100);
       setImportStatus('complete');

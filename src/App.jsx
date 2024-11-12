@@ -20,11 +20,14 @@ function App() {
 
   useEffect(() => { 
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log(session);
+      
       let u = {
         firstName: undefined,
         lastName: undefined,
         email: undefined
+      }
+      if (user?.email && user.email === session?.user?.email) {
+        return;
       }
 
       u.email = session?.user.email;
@@ -36,11 +39,14 @@ function App() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log(session);
       let u = {
         firstName: undefined,
         lastName: undefined,
         email: undefined
+      }
+
+      if (user?.email && user.email === session?.user?.email && session.expires_in > 0) {
+        return;
       }
 
       u.email = session?.user.email;
@@ -50,7 +56,7 @@ function App() {
     })
 
     return () => subscription.unsubscribe()
-  })
+  });
 
   const handleLogout = () => {
     supabase.auth.signOut({scope: 'local'}).then(() => {
