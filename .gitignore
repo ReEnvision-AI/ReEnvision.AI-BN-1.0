@@ -2,7 +2,8 @@
 .tern-*
 node_modules
 /sessions
-/.env*
+/.env
+/.env.*.local
 /session-store.db
 dist
 .DS_Store
