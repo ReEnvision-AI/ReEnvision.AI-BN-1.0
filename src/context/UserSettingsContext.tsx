@@ -1,38 +1,16 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
-
-
-
-interface UserSettings {
-    theme: string;
-    wallpaper: string;
-    username: string;
-    iconSize: string;
-    gridSpacing: number;
-    gridEnabled: boolean;
-    iconColor: string;
-}
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { getSetting, setSetting } from "../utils/settingsdb";
 
 interface UserSettingsContextType {
-    settings: UserSettings;
-    setSettings: (settings: UserSettings) => void;
-    theme: () => string;
-    setTheme: (theme: string) => void;
-    wallpaper: () => string;
-    setWallpaper: (wallpaper: string) => void;
-    username: () => string;
-    setUsername: (username: string) => void;
-    iconSize: () => string;
-    setIconSize: (iconSize: string) => void;
-    gridSpacing: () => number;
-    setGridSpacing: (gridSpacing: number) => void;
-    gridEnabled: () => boolean;
-    setGridEnabled: (isGridEnabled: boolean) => void;
-    iconColor: () => string;
-    setIconColor: (iconColor: string) => void;
+    settings: Record<string, any>;
+    updateSetting: (key: string, value: any) => Promise<void>;
 }
 
-const defaultSettings: UserSettings = {
+const UserSetttingsContext = createContext<UserSettingsContextType | undefined>(undefined);
+
+const defaultSettings = {
     theme: 'dark',
+    language: 'en',
     wallpaper: 'linear-gradient(to right bottom, #2D3436, #000428, #004E92, #000428, #2D3436)',
     username: 'demo',
     iconSize: 'medium',
@@ -41,72 +19,42 @@ const defaultSettings: UserSettings = {
     iconColor: '#FFFFFF'
   };
 
-const UserSettingsContext = createContext<UserSettingsContextType | undefined>(undefined);
+export const UserSettingsProvider = ( {children} : {children: React.ReactNode} ) => {
+    const [settings, setSettings] = useState<Record<string, any>>({});
 
-export const UserSettingsContextProvider = ({children}: {children: ReactNode}) => {
-    const [settings, setSettings] = useState<UserSettings>(defaultSettings);
+    useEffect(()=>{
+        async function loadSettings() {
+            const theme = await getSetting('theme') || defaultSettings.theme;
+            const language = await getSetting('language') || defaultSettings.language;
+            const username = await getSetting('username') || defaultSettings.username;
+            const wallpaper = await getSetting('wallpaper') || defaultSettings.wallpaper;
+            const iconSize = await getSetting('iconSize') || defaultSettings.iconSize;
+            const gridSpacing = await getSetting('gridSpacing') || defaultSettings.gridSpacing;
+            const gridEnabled = await getSetting('gridEnabled') || defaultSettings.gridEnabled;
+            const iconColor = await getSetting('iconColor') || defaultSettings.iconColor;
+            setSettings({theme, language, username, wallpaper, iconSize, gridSpacing, gridEnabled, iconColor})
+        }
 
-    const theme = () => settings.theme;
+        loadSettings();
+    }, []);
 
-    const setTheme = (newTheme) => {
-        settings.theme = newTheme;
-        setSettings(settings);
-    }
-
-    const wallpaper = () => settings.wallpaper;
-
-    const setWallpaper = (newWallpaper) => {
-        settings.wallpaper = newWallpaper;
-        setSettings(settings);
-    }
-
-    const username = () => settings.username;
-
-    const setUsername = (newUsername) => {
-        settings.username = newUsername;
-        setSettings(settings);
-    }
-
-    const iconSize = () => settings.iconSize;
-
-    const setIconSize = (newIconSize: string) => {
-        settings.iconSize = newIconSize;
-        setSettings(settings);
-    }
-
-    const gridSpacing = () => settings.gridSpacing;
-
-    const setGridSpacing = (newGridSpacing: number) => {
-        settings.gridSpacing = newGridSpacing;
-        setSettings(settings);
-    }
-
-    const gridEnabled = () => settings.gridEnabled;
-
-    const setGridEnabled = (isGridEnabled: boolean) => {
-        settings.gridEnabled = isGridEnabled;
-        setSettings(settings);
-    }
-
-    const iconColor = () => settings.iconColor;
-
-    const setIconColor = (newIconColor) => {
-        settings.iconColor = newIconColor;
-        setSettings(settings);
-    }
+    const updateSetting = async (key: string, value: any) => {
+        await setSetting(key, value);
+        setSettings(prev => ({...prev, [key]: value}));
+    };
 
     return (
-        <UserSettingsContext.Provider value={{ settings, setSettings, theme, setTheme, wallpaper, setWallpaper, username, setUsername, iconSize, setIconSize, gridSpacing, setGridSpacing, gridEnabled, setGridEnabled, iconColor, setIconColor }}>
-            {children}
-        </UserSettingsContext.Provider>
-    )
+        <UserSetttingsContext.Provider value={{ settings, updateSetting}}>
+            { children }
+        </UserSetttingsContext.Provider>
+    );
 };
 
-export const useUserSettings = (): UserSettingsContextType => {
-    const context = useContext(UserSettingsContext);
-    if (!context ) {
-        throw new Error('useUserSettings must be used within a UserSettingsContextProvider');
+export const useUserSettings = () => {
+    const context = useContext(UserSetttingsContext);
+    if (!context) {
+        throw new Error('useUserSettings must be used within a UserSettingsProvider')
     }
-    
+
     return context;
 }
