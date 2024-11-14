@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getSetting, setSetting } from "../utils/settingsdb";
+import supbase from '../services/supabaseService';
 
 interface UserSettingsContextType {
     settings: Record<string, any>;
@@ -19,11 +20,22 @@ const defaultSettings = {
     iconColor: '#FFFFFF'
   };
 
+async function syncSettingsToServer(settings: Record<string, any>) {
+    const c = await supbase.from('settings').select('blob');
+    console.log("syncsettingstoserver: ", c, JSON.stringify(settings));
+}
+
+async function syncSettingsFromServer(): Promise<void> {
+    const c = await supbase.from('settings').select('blob');
+    console.log("syncSettingsFromServer: ", c);
+}
+
 export const UserSettingsProvider = ( {children} : {children: React.ReactNode} ) => {
     const [settings, setSettings] = useState<Record<string, any>>({});
 
     useEffect(()=>{
         async function loadSettings() {
+            await syncSettingsFromServer();
             const theme = await getSetting('theme') || defaultSettings.theme;
             const language = await getSetting('language') || defaultSettings.language;
             const username = await getSetting('username') || defaultSettings.username;
@@ -37,6 +49,18 @@ export const UserSettingsProvider = ( {children} : {children: React.ReactNode} )
 
         loadSettings();
     }, []);
+
+    useEffect(() => {
+        const handleUnload = async () => {
+            await syncSettingsToServer(settings);
+        };
+
+        window.addEventListener('beforeunload', handleUnload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleUnload);
+        };
+    }, [settings]);
 
     const updateSetting = async (key: string, value: any) => {
         await setSetting(key, value);

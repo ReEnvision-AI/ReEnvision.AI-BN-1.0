@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Login } from './components/Login';
 import { Desktop } from './components/Desktop/Desktop';
 import { TaskBar } from './components/TaskBar/TaskBar';
 import { WindowManager } from './components/WindowManager';
@@ -7,18 +6,20 @@ import { AppContextProvider } from './context/AppContext';
 import { useUser } from './context/UserContext';
 import { Toaster } from 'react-hot-toast';
 import { Suspense } from 'react';
-import { createClient } from '@supabase/supabase-js';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
-//import { UserSettingsContextProvider } from './context/UserSettingsContext';
 import { UserSettingsProvider } from './context/UserSettingsContext';
-
-const supabase = createClient(import.meta.env.VITE_SUPA_URL, import.meta.env.VITE_SUPA_PUBLIC_KEY)
-
+import supabase from './services/supabaseService';
+import { chat } from './services/llmService';
 
 function App() {
   const [windows, setWindows] = useState([]);
   const { user, setUser, clearUser } = useUser();
+
+  useEffect(() => {
+    chat()
+  })
+
 
   useEffect(() => { 
     supabase.auth.getSession().then(({ data: { session } }) => {
