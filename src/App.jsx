@@ -1,11 +1,10 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Desktop } from './components/Desktop/Desktop';
 import { TaskBar } from './components/TaskBar/TaskBar';
 import { WindowManager } from './components/WindowManager';
 import { AppContextProvider } from './context/AppContext';
 import { useUser } from './context/UserContext';
 import { Toaster } from 'react-hot-toast';
-import { Suspense } from 'react';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { UserSettingsProvider } from './context/UserSettingsContext';

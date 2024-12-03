@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Rnd } from 'react-rnd';
 
 export function DesktopIcon({ app, size, position, onMove, onOpen, onContextMenu, gridSize, isSystem }) {

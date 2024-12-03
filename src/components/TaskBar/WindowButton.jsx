@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Menu } from 'lucide-react';
 
 export function WindowButton({ window, onClick }) {
@@ -21,3 +23,8 @@ export function WindowButton({ window, onClick }) {
     </div>
   );
 }
+
+WindowButton.propTypes = {
+  window: PropTypes.object,
+  onClick: PropTypes.func,
+};

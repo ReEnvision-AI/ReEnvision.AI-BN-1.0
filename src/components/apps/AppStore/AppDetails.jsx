@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Download, Trash2, RefreshCw } from 'lucide-react';
 
 export function AppDetails({ app, onInstall, onUninstall, isInstalled, installing }) {
@@ -90,3 +92,11 @@ export function AppDetails({ app, onInstall, onUninstall, isInstalled, installin
     </div>
   );
 }
+
+AppDetails.propTypes = {
+  app: PropTypes.object,
+  onInstall: PropTypes.func,
+  onUninstall: PropTypes.func,
+  isInstalled: PropTypes.func,
+  installing: PropTypes.string,
+};

@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { ChevronRight } from 'lucide-react';
 
 export function Breadcrumb({ path, onNavigate }) {
@@ -30,3 +32,8 @@ export function Breadcrumb({ path, onNavigate }) {
     </div>
   );
 }
+
+Breadcrumb.propTypes = {
+  path: PropTypes.string,
+  onNavigate: PropTypes.func,
+};

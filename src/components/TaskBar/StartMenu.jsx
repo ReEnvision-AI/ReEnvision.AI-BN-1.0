@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { MenuItem } from './MenuItem';
 
 export function StartMenu({ apps, onLaunchApp }) {
@@ -15,4 +17,9 @@ export function StartMenu({ apps, onLaunchApp }) {
       </div>
     </div>
   );
+};
+
+StartMenu.propTypes = {
+  apps: PropTypes.array,
+  onLaunchApp: PropTypes.func
 }

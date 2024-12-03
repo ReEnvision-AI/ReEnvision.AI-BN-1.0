@@ -1,3 +1,4 @@
+import React from 'react';
 import { Menu } from 'lucide-react';
 
 export function MenuItem({ name, icon: IconComponent = Menu, onClick }) {

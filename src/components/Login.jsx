@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { KeyRound, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { NeuralAnimation } from './NeuralAnimation';
 

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Menu, Power } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { WindowButton } from './WindowButton';
@@ -91,4 +92,10 @@ export function TaskBar({ windows, setWindows, onLogout }) {
       )}
     </div>
   );
-}
+};
+
+TaskBar.propTypes = {
+  windows: PropTypes.array,
+  setWindows: PropTypes.func,
+  onLogout: PropTypes.func,
+};

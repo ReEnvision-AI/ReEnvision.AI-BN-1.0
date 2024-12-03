@@ -1,4 +1,6 @@
-import { Folder, HardDrive, Image, Music, FileText } from 'lucide-react';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { HardDrive, Image, Music, FileText } from 'lucide-react';
 
 export function SideBar({ onNavigate, currentPath }) {
   const locations = [
@@ -43,3 +45,8 @@ export function SideBar({ onNavigate, currentPath }) {
     </div>
   );
 }
+
+SideBar.propTypes = {
+  onNavigate: PropTypes.func,
+  currentPath: PropTypes.string,
+};

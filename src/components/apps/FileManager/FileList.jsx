@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types'
 import { FileIcon, FolderIcon, Trash2 } from 'lucide-react';
 
 export function FileList({ 
@@ -85,6 +87,24 @@ function FileListItem({ name, isDirectory, size, modified, onClick, onDelete }) 
       </button>
     </div>
   );
+}
+
+FileList.propTypes = {
+  files: PropTypes.array,
+  directories: PropTypes.array,
+  loading: PropTypes.bool,
+  onNavigate: PropTypes.func,
+  onDelete: PropTypes.func,
+  currentPath: PropTypes.string,
+};
+
+FileListItem.propTypes = {
+  name: PropTypes.string,
+  isDirectory: PropTypes.bool,
+  size: PropTypes.number,
+  modified: PropTypes.bool,
+  onClick: PropTypes.func,
+  onDelete: PropTypes.func,
 }
 
 function formatSize(bytes) {

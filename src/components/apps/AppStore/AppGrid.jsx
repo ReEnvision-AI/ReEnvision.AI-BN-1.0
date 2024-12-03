@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Download, Trash2, RefreshCw } from 'lucide-react';
 
 export function AppGrid({ apps, onSelect, selectedId, installing, isInstalled }) {
@@ -34,3 +36,11 @@ export function AppGrid({ apps, onSelect, selectedId, installing, isInstalled })
     </div>
   );
 }
+
+AppGrid.propTypes = {
+  apps: PropTypes.array,
+  onSelect: PropTypes.func,
+  selectedId: PropTypes.string,
+  installing: PropTypes.array,
+  isInstalled: PropTypes.func,
+};

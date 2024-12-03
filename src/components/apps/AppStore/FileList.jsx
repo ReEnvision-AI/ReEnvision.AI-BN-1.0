@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { FileText, Folder } from 'lucide-react';
 
 export function FileList({ files }) {
@@ -26,3 +28,7 @@ export function FileList({ files }) {
     </div>
   );
 }
+
+FileList.propTypes = {
+  files: PropTypes.array,
+};

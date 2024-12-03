@@ -1,64 +1,11 @@
-import { useState } from 'react';
-import { Menu, Power, FileText, Calculator, Settings, Terminal, Store } from 'lucide-react';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import { Menu, Power} from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { TextPad } from './apps/TextPad';
-import { Calculator as CalculatorApp } from './apps/Calculator';
-import { Settings as SettingsApp } from './apps/Settings/Settings';
-import { Terminal as TerminalApp } from './apps/Terminal';
-import { AppStore } from './apps/AppStore';
 
 export function TaskBar({ windows, setWindows, onLogout }) {
   const [startOpen, setStartOpen] = useState(false);
-  const { installedApps, setInstalledApps, uninstallApp, installApp, availableApps } = useApp();
-
-  const defaultApps = [
-    { 
-      id: 'textpad', 
-      name: 'TextPad',
-      icon: FileText,
-      component: TextPad,
-      width: 600,
-      height: 400
-    },
-    { 
-      id: 'calculator', 
-      name: 'Calculator',
-      icon: Calculator,
-      component: CalculatorApp,
-      width: 320,
-      height: 480
-    },
-    {
-      id: 'settings',
-      name: 'Settings',
-      icon: Settings,
-      component: SettingsApp,
-      width: 800,
-      height: 600
-    },
-    {
-      id: 'terminal',
-      name: 'Terminal',
-      icon: Terminal,
-      component: TerminalApp,
-      width: 600,
-      height: 400
-    },
-    {
-      id: 'appstore',
-      name: 'App Store',
-      icon: Store,
-      component: AppStore,
-      width: 900,
-      height: 600
-    }
-  ];
-
-  //const availableApps = defaultApps.filter(app => 
-  //  app.id === 'settings' || 
-  //  app.id === 'appstore' || 
-  //  installedApps?.includes(app.id)
-  //);
+  const { availableApps } = useApp();
 
   const launchApp = (app) => {
     setWindows(prev => [...prev, {
@@ -101,6 +48,10 @@ export function TaskBar({ windows, setWindows, onLogout }) {
       </div>
     );
   }
+  WindowButton.propTypes = {
+    window: PropTypes.object,
+    onClick: PropTypes.func,
+  };
 
   function StartMenu({ apps, onLaunchApp }) {
     return (
@@ -118,6 +69,10 @@ export function TaskBar({ windows, setWindows, onLogout }) {
       </div>
     );
   }
+  StartMenu.propTypes = {
+    apps: PropTypes.array,
+    onLaunchApp: PropTypes.func,
+  };
 
   function MenuItem({ name, Icon = Menu, onClick }) {
     return (
@@ -130,6 +85,11 @@ export function TaskBar({ windows, setWindows, onLogout }) {
       </div>
     );
   }
+  MenuItem.propTypes = {
+    name: PropTypes.string,
+    Icon: PropTypes.object,
+    onClick: PropTypes.func,
+  };
 
   return (
     <div className="absolute bottom-0 left-0 right-0 h-16 bg-gray-900/95 backdrop-blur border-t border-gray-700">
@@ -176,4 +136,10 @@ export function TaskBar({ windows, setWindows, onLogout }) {
       )}
     </div>
   );
-}
+};
+
+TaskBar.propTypes = {
+  windows: PropTypes.array,
+  setWindows: PropTypes.func,
+  onLogout: PropTypes.func,
+};

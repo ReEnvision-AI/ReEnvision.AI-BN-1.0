@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Search } from 'lucide-react';
 
 export function SearchBar({ value, onChange }) {
@@ -16,4 +18,9 @@ export function SearchBar({ value, onChange }) {
       <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
     </div>
   );
+}
+
+SearchBar.propTypes = {
+  value: PropTypes.string,
+  onChange: PropTypes.func,
 }

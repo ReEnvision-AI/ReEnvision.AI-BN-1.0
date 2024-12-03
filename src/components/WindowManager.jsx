@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import { Rnd } from 'react-rnd';
 import { X, Minus, Square, ChevronDown } from 'lucide-react';
 
@@ -243,3 +244,8 @@ export function WindowManager({ windows, setWindows }) {
     </>
   );
 }
+
+WindowManager.propTypes = {
+  windows: PropTypes.array,
+  setWindows: PropTypes.func,
+};

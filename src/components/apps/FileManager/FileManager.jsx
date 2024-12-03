@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { FolderIcon, FileIcon, ChevronLeft, ChevronRight, Upload, FolderPlus, Trash2, RefreshCw } from 'lucide-react';
+import React, { useState } from 'react';
 import { FileList } from './FileList';
 import { Breadcrumb } from './Breadcrumb';
 import { Toolbar } from './Toolbar';

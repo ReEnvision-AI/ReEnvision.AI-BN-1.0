@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 //import { useApp } from '../../../context/AppContext';
 import { AccountSettings } from './AccountSettings';
 import { AppearanceSettings } from './AppearanceSettings';
