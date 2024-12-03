@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { useDropzone } from 'react-dropzone';
 import { Upload } from 'lucide-react';
 
@@ -98,4 +100,9 @@ export function WallpaperSettings({ currentWallpaper, onWallpaperChange }) {
       )}
     </div>
   );
+}
+
+WallpaperSettings.propTypes = {
+  currentWallpaper: PropTypes.string.isRequired,
+  onWallpaperChange: PropTypes.func.isRequired
 }

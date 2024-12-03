@@ -4,7 +4,7 @@ import llmAppConfig from './llmAppConfig';
 
 const default_max_tokens = 1024;
 const default_temp = 0.8;
-let modelLoaded: boolean = false;
+const modelLoaded: boolean = false;
 
 export enum Role {
   system = "system",
@@ -52,7 +52,7 @@ function getEngine() {
     
 
 export async function chat(request?: ChatRequest, streaming?: boolean) {
-  let engine = getEngine();
+  const engine = getEngine();
   await loadModel();
 }
 
@@ -62,7 +62,7 @@ async function loadModel() {
   let maxStorageBufferBindingSize: number;
   let restrictModel: boolean = false;
   let gpuVendor: string;
-  let engine: webllm.MLCEngineInterface = getEngine();
+  const engine: webllm.MLCEngineInterface = getEngine();
   try {
     [maxStorageBufferBindingSize, gpuVendor] = await Promise.all([
       engine.getMaxStorageBufferBindingSize(),
@@ -81,7 +81,7 @@ async function loadModel() {
   console.log("maxStorageBufferBindingSize:", `${maxStorageBufferBindingSize} bytes`);
   console.log('gpuVendor:', gpuVendor);
 
-  let model = restrictModel? LOW_RESOURCE_MODEL : DEFAULT_MODEL;
+  const model = restrictModel? LOW_RESOURCE_MODEL : DEFAULT_MODEL;
   console.log('selected model:', model);
 
   engine.setInitProgressCallback(initProgressCallback);

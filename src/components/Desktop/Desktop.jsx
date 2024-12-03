@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import PropTypes from 'prop-types';
 import { useApp } from '../../context/AppContext';
 import { Rnd } from 'react-rnd';
 import { defaultApps } from '../../data/defaultApps';
 import { useUserSettings } from '../../context/UserSettingsContext';
 
-export function Desktop({ children, windows, setWindows }) {
+export function Desktop({ children, setWindows }) {
   //const { settings, installedApps } = useApp();
   const { settings } = useUserSettings();
   const { installedApps } = useApp();
@@ -205,4 +206,9 @@ export function Desktop({ children, windows, setWindows }) {
       {children}
     </div>
   );
+}
+
+Desktop.propTypes = {
+  children: PropTypes.arrayOf(PropTypes.element).isRequired,
+  setWindows: PropTypes.func.isRequired,
 }

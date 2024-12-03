@@ -1,7 +1,6 @@
-import { useState } from "react";
-import { createContext } from "react";
+import React, { createContext, useContext, useState } from "react";
+import PropTypes from 'prop-types';
 import { AVAILABLE_APPS } from "../components/apps/AppStore/apps-data";
-import { useContext } from "react";
 
 const AppContext = createContext([]);
 
@@ -30,6 +29,10 @@ export const AppContextProvider = ({children}) => {
             {children}
         </AppContext.Provider>
     )
+}
+
+AppContextProvider.propTypes = {
+    children: PropTypes.arrayOf(PropTypes.element).isRequired,
 }
 
 export const useApp = () => {

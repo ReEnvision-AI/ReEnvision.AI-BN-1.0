@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Sun, Moon, Palette, Grid } from 'lucide-react';
 
 // Add proper export statement
 export function AppearanceSettings({ settings, onThemeChange, onWallpaperChange, onIconColorChange, onGridSettingsChange }) {
-  const [colorPickerOpen, setColorPickerOpen] = useState(false);
 
   const BACKGROUND_PRESETS = {
     gradients: [
@@ -168,4 +168,12 @@ export function AppearanceSettings({ settings, onThemeChange, onWallpaperChange,
       </div>
     </div>
   );
+}
+
+AppearanceSettings.propTypes = {
+  settings: PropTypes.any,
+  onThemeChange: PropTypes.func.isRequired,
+  onWallpaperChange: PropTypes.func.isRequired,
+  onIconColorChange: PropTypes.func.isRequired,
+  onGridSettingsChange: PropTypes.func.isRequired,
 }

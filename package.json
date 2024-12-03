@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "dev:host": "vite --host",
+    "dev:host-open": "vite --host --open",
+    "dev:open": "vite --open",
     "build": "vite build",
     "preview": "vite preview",
     "preview:host": "vite preview --host",
@@ -40,6 +42,7 @@
     "jszip": "^3.10.1",
     "lucide-react": "^0.284.0",
     "openai": "^4.72.0",
+    "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",

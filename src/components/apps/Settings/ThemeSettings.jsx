@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-type';
 import { Sun, Moon } from 'lucide-react';
 
 export function ThemeSettings({ currentTheme, onThemeChange }) {
@@ -40,4 +42,9 @@ export function ThemeSettings({ currentTheme, onThemeChange }) {
       </div>
     </div>
   );
+}
+
+ThemeSettings.propTypes = {
+  currentTheme: PropTypes.string.isRequired,
+  onThemeChange: PropTypes.func.isRequired,
 }
