@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 
 export function ContextMenu({ x, y, onDelete, onClose }) {
   const menuRef = useRef(null);
@@ -31,4 +32,11 @@ export function ContextMenu({ x, y, onDelete, onClose }) {
       </button>
     </div>
   );
-}
+};
+
+ContextMenu.propTypes = {
+  x: PropTypes.number,
+  y: PropTypes.number,
+  onDelete: PropTypes.func,
+  onClose: PropTypes.func,
+};

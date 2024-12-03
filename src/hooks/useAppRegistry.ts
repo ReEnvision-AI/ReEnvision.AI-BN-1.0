@@ -5,7 +5,7 @@ import { AppInfo, AppState } from '@reai/types';
 
 export function useAppRegistry() {
   const registry = AppRegistry.getInstance();
-  const [apps, setApps] = useState<AppInfo[]>(registry.getAllApps());
+  const [apps] = useState<AppInfo[]>(registry.getAllApps());
   const [appStates, setAppStates] = useState<Record<string, AppState>>({});
 
   useEffect(() => {

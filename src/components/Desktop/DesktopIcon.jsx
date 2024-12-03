@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { Rnd } from 'react-rnd';
+import PropTypes from 'prop-types';
 
 export function DesktopIcon({ app, size, position, onMove, onOpen, onContextMenu, gridSize, isSystem }) {
   const [isDragging, setIsDragging] = useState(false);
@@ -119,3 +120,14 @@ export function DesktopIcon({ app, size, position, onMove, onOpen, onContextMenu
     </Rnd>
   );
 }
+
+DesktopIcon.propTypes = {
+  app: PropTypes.object,
+  size: PropTypes.number,
+  position: PropTypes.object,
+  onMove: PropTypes.func,
+  onOpen: PropTypes.func,
+  onContextMenu: PropTypes.func,
+  gridSize: PropTypes.number,
+  isSystem: PropTypes.bool,
+};

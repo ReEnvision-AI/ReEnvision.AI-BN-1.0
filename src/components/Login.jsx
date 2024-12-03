@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { KeyRound, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { NeuralAnimation } from './NeuralAnimation';
 
@@ -24,7 +25,7 @@ export function Login({ onLogin }) {
       } else {
         setError('Invalid username or password');
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
@@ -141,4 +142,8 @@ export function Login({ onLogin }) {
       </div>
     </div>
   );
-}
+};
+
+Login.propTypes = {
+  onLogin: PropTypes.func,
+};

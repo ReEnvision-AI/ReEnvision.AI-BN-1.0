@@ -28,7 +28,7 @@ export function Desktop({ children, setWindows }) {
     
     const occupiedPositions = new Set(
       Object.entries(iconPositions)
-        .map(([id, pos]) => `${pos.x},${pos.y}`)
+        .map(([pos]) => `${pos.x},${pos.y}`)
     );
 
     defaultApps.forEach((app) => {
@@ -37,13 +37,15 @@ export function Desktop({ children, setWindows }) {
         let col = 0;
         let position;
 
-        while (true) {
+        let continueChecking = true;
+        while (continueChecking) {
           const x = col * (iconSize.width + gridSize) + gridSize;
           const y = row * (iconSize.height + gridSize) + gridSize;
 
           if (y + iconSize.height <= maxY && !occupiedPositions.has(`${x},${y}`)) {
             position = { x, y };
             occupiedPositions.add(`${x},${y}`);
+            continueChecking = false;
             break;
           }
 

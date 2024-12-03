@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Menu } from 'lucide-react';
 
 export function MenuItem({ name, icon: IconComponent = Menu, onClick }) {
@@ -11,4 +12,10 @@ export function MenuItem({ name, icon: IconComponent = Menu, onClick }) {
       <span className="text-sm truncate">{name}</span>
     </div>
   );
+}
+
+MenuItem.propTypes = {
+  name: PropTypes.string,
+  icon: PropTypes.object,
+  onClick: PropTypes.func,
 }
