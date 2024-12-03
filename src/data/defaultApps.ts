@@ -1,5 +1,5 @@
 
-import { Prez, PrezManifest } from '@reai/prez';
+import { PrezManifest } from '@reai/prez';
 
 import CalculatorManifest from '@reai/calculator/manifest';
 import TextPadManifest from '@reai/textpad/manifest';

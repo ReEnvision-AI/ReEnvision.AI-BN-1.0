@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { FolderPlus, Upload, RefreshCw } from 'lucide-react';
 
 export function Toolbar({ onCreateFolder, onUpload, onRefresh }) {
@@ -35,4 +37,10 @@ export function Toolbar({ onCreateFolder, onUpload, onRefresh }) {
       </button>
     </div>
   );
+}
+
+Toolbar.propTypes = {
+  onCreateFolder: PropTypes.func.isRequired,
+  onUpload: PropTypes.func.isRequired,
+  onRefresh: PropTypes.func.isRequired,
 }

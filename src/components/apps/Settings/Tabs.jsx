@@ -1,3 +1,6 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+
 export function Tabs({ tabs, activeTab, onTabChange }) {
   return (
     <div className="flex border-b border-gray-700">
@@ -17,4 +20,10 @@ export function Tabs({ tabs, activeTab, onTabChange }) {
       ))}
     </div>
   );
+}
+
+Tabs.propTypes = {
+  tabs: PropTypes.array,
+  activeTab: PropTypes.string,
+  onTabChange: PropTypes.func,
 }

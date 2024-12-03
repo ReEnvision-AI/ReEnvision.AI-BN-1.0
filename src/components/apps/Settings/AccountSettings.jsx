@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types'
 
 export function AccountSettings({ username, onUsernameChange }) {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -128,3 +129,8 @@ export function AccountSettings({ username, onUsernameChange }) {
     </div>
   );
 }
+
+AccountSettings.propTypes = {
+  username: PropTypes.string,
+  onUsernameChange: PropTypes.func,
+};

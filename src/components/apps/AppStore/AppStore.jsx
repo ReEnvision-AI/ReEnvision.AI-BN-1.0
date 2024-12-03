@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Search, Download, Trash2, Package, RefreshCw, Upload } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, Download, Trash2, RefreshCw } from 'lucide-react';
 import { useApp } from '../../../context/AppContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AVAILABLE_APPS } from './apps-data';
@@ -8,7 +8,6 @@ export function AppStore() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [installing, setInstalling] = useState({});
-  const [showImport, setShowImport] = useState(false);
   const { installedApps, uninstallApp, installApp } = useApp();
 
   const categories = [

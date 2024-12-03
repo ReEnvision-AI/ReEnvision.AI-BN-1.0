@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import { cn } from '../../lib/utils';
 
@@ -52,5 +53,17 @@ const TabsContent = React.forwardRef<
   />
 ));
 TabsContent.displayName = TabsPrimitive.Content.displayName;
+
+TabsList.propTypes = {
+  className: PropTypes.string
+}
+
+TabsTrigger.propTypes = {
+  className: PropTypes.string
+}
+
+TabsContent.propTypes = {
+  className: PropTypes.string
+}
 
 export { Tabs, TabsList, TabsTrigger, TabsContent };
