@@ -1,14 +1,5 @@
 import { openDB, IDBPDatabase } from 'idb';
 
-interface UserSettings {
-    theme: string;
-    language: string;
-    wallpaper: string;
-    username: string;
-    iconSize: string;
-    [key: string]: any;
-}
-
 const DB_NAME = 'user_settings';
 const STORE_NAME = 'settings';
 

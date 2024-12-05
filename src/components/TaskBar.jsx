@@ -1,43 +1,51 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { Menu, Power} from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { Menu, Power } from "lucide-react";
+import { useApp } from "../context/AppContext";
 
 export function TaskBar({ windows, setWindows, onLogout }) {
   const [startOpen, setStartOpen] = useState(false);
   const { availableApps } = useApp();
 
   const launchApp = (app) => {
-    setWindows(prev => [...prev, {
-      id: Date.now(),
-      title: app.name,
-      content: <app.component />,
-      icon: app.icon,
-      x: Math.random() * (window.innerWidth - app.width),
-      y: Math.random() * (window.innerHeight - app.height),
-      width: app.width,
-      height: app.height
-    }]);
+    setWindows((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        title: app.name,
+        content: <app.component />,
+        icon: app.icon,
+        url: app.url ? app.url : null,
+        x: Math.random() * (window.innerWidth - app.width),
+        y: Math.random() * (window.innerHeight - app.height),
+        width: app.width,
+        height: app.height,
+      },
+    ]);
     setStartOpen(false);
   };
 
   const toggleWindow = (window) => {
-    setWindows(prev => prev.map(w => 
-      w.id === window.id 
-        ? { ...w, minimized: !w.minimized }
-        : w
-    ));
+    setWindows((prev) =>
+      prev.map((w) =>
+        w.id === window.id ? { ...w, minimized: !w.minimized } : w
+      )
+    );
   };
 
   function WindowButton({ window, onClick }) {
     const Icon = window.icon || Menu;
-    
+
     return (
-      <div 
+      <div
         className={`
           flex flex-col items-center min-w-[80px] p-2 rounded-lg cursor-pointer
           touch-manipulation transition-colors
-          ${window.minimized ? 'bg-transparent hover:bg-white/10' : 'bg-white/20'}
+          ${
+            window.minimized
+              ? "bg-transparent hover:bg-white/10"
+              : "bg-white/20"
+          }
         `}
         onClick={onClick}
       >
@@ -57,8 +65,8 @@ export function TaskBar({ windows, setWindows, onLogout }) {
     return (
       <div className="absolute bottom-16 left-0 w-64 bg-gray-900/95 backdrop-blur border border-gray-700 rounded-t-lg p-2 z-50">
         <div className="grid gap-1">
-          {apps.map(app => (
-            <MenuItem 
+          {apps.map((app) => (
+            <MenuItem
               key={app.id}
               name={app.name}
               Icon={app.icon}
@@ -76,7 +84,7 @@ export function TaskBar({ windows, setWindows, onLogout }) {
 
   function MenuItem({ name, Icon = Menu, onClick }) {
     return (
-      <div 
+      <div
         className="flex items-center gap-2 p-2 hover:bg-white/10 rounded-lg text-white w-full text-left touch-manipulation cursor-pointer"
         onClick={onClick}
       >
@@ -102,9 +110,9 @@ export function TaskBar({ windows, setWindows, onLogout }) {
         </div>
 
         <div className="flex-1 flex items-center justify-center gap-2 px-2 overflow-x-auto">
-          {windows.map(window => (
-            <WindowButton 
-              key={window.id} 
+          {windows.map((window) => (
+            <WindowButton
+              key={window.id}
               window={window}
               onClick={() => toggleWindow(window)}
             />
@@ -113,10 +121,7 @@ export function TaskBar({ windows, setWindows, onLogout }) {
 
         <div className="flex items-center gap-2 px-2">
           <span className="text-white/50 text-sm">TODO Name Goes Here</span>
-          <div 
-            className="cursor-pointer"
-            onClick={onLogout}
-          >
+          <div className="cursor-pointer" onClick={onLogout}>
             <Power className="w-5 h-5 text-white/50 hover:text-white" />
           </div>
         </div>
@@ -124,19 +129,13 @@ export function TaskBar({ windows, setWindows, onLogout }) {
 
       {startOpen && (
         <>
-          <div 
-            className="fixed inset-0" 
-            onClick={() => setStartOpen(false)}
-          />
-          <StartMenu 
-            apps={availableApps}
-            onLaunchApp={launchApp}
-          />
+          <div className="fixed inset-0" onClick={() => setStartOpen(false)} />
+          <StartMenu apps={availableApps} onLaunchApp={launchApp} />
         </>
       )}
     </div>
   );
-};
+}
 
 TaskBar.propTypes = {
   windows: PropTypes.array,

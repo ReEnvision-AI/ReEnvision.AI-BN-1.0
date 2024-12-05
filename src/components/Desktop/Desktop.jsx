@@ -131,10 +131,11 @@ export function Desktop({ children, setWindows }) {
       title: app.name,
       content: <app.component />,
       icon: app.icon,
+      url: app.url ? app.url : null,
       x,
       y,
       width,
-      height
+      height,
     }]);
   }, [setWindows]);
 

@@ -6,7 +6,9 @@ import AIDevStudioManifest from '@reai/aidevstudio/manifest';
 import LocalAIManifest from '@reai/localai/manifest';
 import AIBrowserManifest from '@reai/aibrowser/manifest';
 import ChattyAIManifest from '@reai/chattyai/manifest';
- 
+
+CalculatorManifest.url = 'https://reai-apps.vercel.app/calculator';
+
 export const AVAILABLE_APPS = [
   AIBrowserManifest,
   SalesFlowManifest,

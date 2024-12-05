@@ -9,16 +9,10 @@ import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { UserSettingsProvider } from './context/UserSettingsContext';
 import supabase from './services/supabaseService';
-import { chat } from './services/llmService';
 
 function App() {
   const [windows, setWindows] = useState([]);
   const { user, setUser, clearUser } = useUser();
-
-  useEffect(() => {
-    chat()
-  })
-
 
   useEffect(() => { 
     supabase.auth.getSession().then(({ data: { session } }) => {

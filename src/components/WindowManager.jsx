@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
-import { Rnd } from 'react-rnd';
-import { X, Minus, Square, ChevronDown } from 'lucide-react';
+import React, { useState, useEffect, useRef } from "react";
+import PropTypes from "prop-types";
+import { Rnd, } from "react-rnd";
+import { X, Minus, Square, ChevronDown } from "lucide-react";
 
 export function WindowManager({ windows, setWindows }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
@@ -14,13 +14,13 @@ export function WindowManager({ windows, setWindows }) {
       setIsMobile(window.innerWidth <= 640);
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const closeWindow = (id) => {
-    setWindows(prev => prev.filter(w => w.id !== id));
-    setWindowStates(prev => {
+    setWindows((prev) => prev.filter((w) => w.id !== id));
+    setWindowStates((prev) => {
       const newStates = { ...prev };
       delete newStates[id];
       return newStates;
@@ -28,32 +28,32 @@ export function WindowManager({ windows, setWindows }) {
   };
 
   const minimizeWindow = (id) => {
-    setWindows(prev => prev.map(w => 
-      w.id === id ? { ...w, minimized: true } : w
-    ));
+    setWindows((prev) =>
+      prev.map((w) => (w.id === id ? { ...w, minimized: true } : w))
+    );
   };
 
   const maximizeWindow = (id) => {
-    setWindowStates(prev => {
+    setWindowStates((prev) => {
       const currentState = prev[id] || {};
       const isMaximized = currentState.isMaximized || false;
 
       if (!isMaximized) {
         // Save current position and size before maximizing
-        const window = windows.find(w => w.id === id);
+        const window = windows.find((w) => w.id === id);
         return {
           ...prev,
           [id]: {
             isMaximized: true,
             prevSize: {
               width: window.width || 600,
-              height: window.height || 400
+              height: window.height || 400,
             },
             prevPosition: {
               x: window.x || 0,
-              y: window.y || 0
-            }
-          }
+              y: window.y || 0,
+            },
+          },
         };
       } else {
         // Restore previous position and size
@@ -61,8 +61,8 @@ export function WindowManager({ windows, setWindows }) {
           ...prev,
           [id]: {
             ...currentState,
-            isMaximized: false
-          }
+            isMaximized: false,
+          },
         };
       }
     });
@@ -70,9 +70,9 @@ export function WindowManager({ windows, setWindows }) {
 
   const bringToFront = (id) => {
     setActiveWindow(id);
-    setWindows(prev => {
-      const window = prev.find(w => w.id === id);
-      const others = prev.filter(w => w.id !== id);
+    setWindows((prev) => {
+      const window = prev.find((w) => w.id === id);
+      const others = prev.filter((w) => w.id !== id);
       return [...others, window];
     });
   };
@@ -81,7 +81,7 @@ export function WindowManager({ windows, setWindows }) {
     const touch = e.touches[0];
     touchStartRef.current = {
       y: touch.clientY,
-      time: Date.now()
+      time: Date.now(),
     };
   };
 
@@ -107,7 +107,7 @@ export function WindowManager({ windows, setWindows }) {
     const velocity = Math.abs(deltaY / deltaTime);
 
     const element = e.currentTarget;
-    element.style.transform = '';
+    element.style.transform = "";
 
     // Handle swipe gestures
     if (Math.abs(deltaY) > 100 && velocity > 0.3) {
@@ -126,9 +126,25 @@ export function WindowManager({ windows, setWindows }) {
     handler();
   };
 
+  const renderAppContent = (window) => {
+    if (window.url) {
+      return (
+        <div className="flex-1 p-4 overflow-auto scroll-rubber-band">
+          <iframe src={window.url} width="100%" height="95%" allowFullScreen="false" ></iframe>
+        </div>
+      )
+    } else {
+    return (
+      <div className="flex-1 p-4 overflow-auto scroll-rubber-band">
+        {window.content}
+      </div>
+    );
+  }
+  };
+
   return (
     <>
-      {windows.map(window => {
+      {windows.map((window) => {
         if (window.minimized) return null;
 
         const windowState = windowStates[window.id] || {};
@@ -139,21 +155,27 @@ export function WindowManager({ windows, setWindows }) {
         const screenWidth = window.innerWidth;
         const screenHeight = window.innerHeight;
         const defaultWidth = Math.min(window.width || 600, screenWidth * 0.9);
-        const defaultHeight = Math.min(window.height || 400, screenHeight * 0.9);
+        const defaultHeight = Math.min(
+          window.height || 400,
+          screenHeight * 0.9
+        );
+        console.log("Default size (wxh): ", defaultWidth, defaultHeight);
 
-        const position = isMaximized 
+        const position = isMaximized
           ? { x: 0, y: 0 }
-          : windowState.prevPosition || { 
+          : windowState.prevPosition || {
               x: window.x || (screenWidth - defaultWidth) / 2,
-              y: window.y || (screenHeight - defaultHeight) / 2
+              y: window.y || (screenHeight - defaultHeight) / 2,
             };
 
         const size = isMaximized
-          ? { width: '100%', height: '100%' }
+          ? { width: "100%", height: "100%" }
           : windowState.prevSize || {
               width: defaultWidth,
-              height: defaultHeight
+              height: defaultHeight,
             };
+
+        console.log("Window url: ", window.url);
 
         return (
           <Rnd
@@ -169,19 +191,21 @@ export function WindowManager({ windows, setWindows }) {
             disableDragging={isMaximized}
             onDragStart={() => bringToFront(window.id)}
             onDragStop={(e, d) => {
-              setWindows(prev => prev.map(w =>
-                w.id === window.id ? { ...w, x: d.x, y: d.y } : w
-              ));
+              setWindows((prev) =>
+                prev.map((w) =>
+                  w.id === window.id ? { ...w, x: d.x, y: d.y } : w
+                )
+              );
             }}
           >
-            <div 
+            <div
               className={`
                 flex flex-col h-full bg-gray-800 rounded-lg shadow-xl border border-gray-700
-                ${window.id === activeWindow ? 'ring-2 ring-blue-500/50' : ''}
+                ${window.id === activeWindow ? "ring-2 ring-blue-500/50" : ""}
               `}
               onClick={() => bringToFront(window.id)}
             >
-              <div 
+              <div
                 className="window-drag-handle flex items-center h-12 px-4 bg-gray-900 rounded-t-lg select-none"
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
@@ -193,7 +217,9 @@ export function WindowManager({ windows, setWindows }) {
                 <div className="flex items-center gap-1">
                   {isMobile ? (
                     <button
-                      onClick={(e) => handleControlClick(e, () => minimizeWindow(window.id))}
+                      onClick={(e) =>
+                        handleControlClick(e, () => minimizeWindow(window.id))
+                      }
                       className="relative flex items-center justify-center w-12 h-12 hover:bg-gray-700/50 active:bg-gray-700 rounded-lg transition-colors group touch-manipulation"
                       aria-label="Minimize"
                     >
@@ -202,14 +228,18 @@ export function WindowManager({ windows, setWindows }) {
                   ) : (
                     <>
                       <button
-                        onClick={(e) => handleControlClick(e, () => minimizeWindow(window.id))}
+                        onClick={(e) =>
+                          handleControlClick(e, () => minimizeWindow(window.id))
+                        }
                         className="relative flex items-center justify-center w-10 h-10 hover:bg-gray-700/50 active:bg-gray-700 rounded-lg transition-colors group touch-manipulation"
                         aria-label="Minimize"
                       >
                         <Minus className="w-4 h-4 text-gray-300 group-hover:text-white transition-colors" />
                       </button>
                       <button
-                        onClick={(e) => handleControlClick(e, () => maximizeWindow(window.id))}
+                        onClick={(e) =>
+                          handleControlClick(e, () => maximizeWindow(window.id))
+                        }
                         className="relative flex items-center justify-center w-10 h-10 hover:bg-gray-700/50 active:bg-gray-700 rounded-lg transition-colors group touch-manipulation"
                         aria-label="Maximize"
                       >
@@ -218,25 +248,27 @@ export function WindowManager({ windows, setWindows }) {
                     </>
                   )}
                   <button
-                    onClick={(e) => handleControlClick(e, () => closeWindow(window.id))}
+                    onClick={(e) =>
+                      handleControlClick(e, () => closeWindow(window.id))
+                    }
                     className={`
                       relative flex items-center justify-center
-                      ${isMobile ? 'w-12 h-12' : 'w-10 h-10'}
+                      ${isMobile ? "w-12 h-12" : "w-10 h-10"}
                       hover:bg-red-500/20 active:bg-red-500/30
                       rounded-lg transition-colors group touch-manipulation
                     `}
                     aria-label="Close"
                   >
-                    <X className={`
+                    <X
+                      className={`
                       text-gray-300 group-hover:text-red-400 transition-colors
-                      ${isMobile ? 'w-6 h-6' : 'w-4 h-4'}
-                    `} />
+                      ${isMobile ? "w-6 h-6" : "w-4 h-4"}
+                    `}
+                    />
                   </button>
                 </div>
               </div>
-              <div className="flex-1 p-4 overflow-auto scroll-rubber-band">
-                {window.content}
-              </div>
+              {renderAppContent(window)}
             </div>
           </Rnd>
         );
