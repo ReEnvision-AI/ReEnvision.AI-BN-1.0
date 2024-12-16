@@ -3,12 +3,10 @@ import { useStore } from "../../store/useStore";
 import { AppIcon } from "./AppIcon";
 import { Taskbar } from "./TaskBar";
 import { Window } from "./Window";
-//import { useInstalledApps } from "../../contexts/useInstalledApps";
 import { useAppStore } from "../../store/useAppStore";
 import { useAuthStore } from "../../store/useAuthStore";
 import { defaultApps } from "../../hooks/useApps";
 import { useState } from "react";
-//import { useInstalledApps } from "../../hooks/useInstalledApps";
 
 export const Desktop: React.FC = () => {
   const { data: default_apps, isLoading, error } = defaultApps();
@@ -31,8 +29,6 @@ export const Desktop: React.FC = () => {
 
   const { windows } = useStore();
 
-  console.log("Installed apps:", installedApps);
-
   const apps = default_apps?.concat(installedApps ? installedApps: []);
 
   if (isLoading) return <div>Loading apps...</div>;
@@ -54,7 +50,7 @@ export const Desktop: React.FC = () => {
       </div>
 
       {windows.map((window) => (
-        <Window key={window.id} window={window} />
+        <Window key={window.id} window={window} isMobile={isMobile} />
       ))}
       
       <Taskbar />

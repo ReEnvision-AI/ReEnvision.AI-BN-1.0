@@ -8,9 +8,10 @@ import { Suspense } from 'react';
 
 interface WindowProps {
   window: WindowType;
+  isMobile: boolean;
 }
 
-export const Window: React.FC<WindowProps> = ({ window }) => {
+export const Window: React.FC<WindowProps> = ({ window, isMobile }) => {
   const { closeWindow, updateWindow, bringToFront } = useStore();
 
   const handleDragStop = (_e: RndDragEvent, d: { x: number; y: number }) => {
