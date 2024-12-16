@@ -31,10 +31,11 @@ export const useAppStore = create<AppStore>()(
                     set({loading: false});
                     throw error;
                 }
+                set({loading: false});
 
                 set({installableApps: data || []});
                 
-                set({loading: false});
+                
             },
 
             fetchInstalledApps: async (user_id: string) => {
@@ -45,11 +46,12 @@ export const useAppStore = create<AppStore>()(
                     set({loading: false});
                     throw error;
                 }
+                set({loading: false});
 
                 const t = data.map(item => item.installable_apps);
                 set({installedApps: t || []});
                 //set({installedApps: data});
-                set({loading: false});
+                
             },
 
             fetchCategories: async () => {
@@ -64,12 +66,13 @@ export const useAppStore = create<AppStore>()(
                     set({loading: false});
                     throw error;
                 }
-
+                set({loading: false});
+                
                 const app = get().installableApps.find((app) => app.id === app_id);
                 if (app) {
                     set({installedApps: [...get().installedApps, app]});
                 }
-                set({loading: false});
+                
 
             },
 

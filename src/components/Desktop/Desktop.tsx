@@ -12,7 +12,7 @@ import { useState } from "react";
 export const Desktop: React.FC = () => {
   //const { data: default_apps, isLoading, error } = defaultApps();
   const default_apps = getDefaultApps();
-  const { fetchInstalledApps, installedApps, loading } = useAppStore();
+  const { fetchInstalledApps, installedApps } = useAppStore();
   const { getUser } = useAuthStore();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
 
@@ -33,7 +33,7 @@ export const Desktop: React.FC = () => {
 
   const apps = default_apps?.concat(installedApps ? installedApps: []);
 
-  if (loading) return <div>Loading apps...</div>;
+  //if (loading) return <div>Loading apps...</div>;
   //if (error) return <div>Error loading apps</div>;
 
   return (
