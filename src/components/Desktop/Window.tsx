@@ -1,15 +1,9 @@
 import React from "react";
 import { Rnd, RndDragEvent } from "react-rnd";
-import {
-  ChevronDown,
-  Minus,
-  Square,
-  X,
-} from "lucide-react";
+import { ChevronDown, Minus, Square, X } from "lucide-react";
 import { useStore } from "../../store/useStore";
 import type { Window as WindowType } from "../../types";
 import { Suspense } from "react";
-//import AppStore from '../apps/AppStore/AppStore';
 
 interface WindowProps {
   window: WindowType;
@@ -46,11 +40,16 @@ export const Window: React.FC<WindowProps> = ({ window, isMobile }) => {
   const toggleMaximize = () => {
     console.log("toggleMaximize", window.isMaximized);
     console.log("isMaximized:", !window.isMaximized);
-    console.log("position:", !window.isMaximized ? { x: 0, y: 0 } : window.position)
-    console.log("size:", !window.isMaximized
-      ? { width: "100%", height: "100%" }
-      : { width: 800, height: 600 });
-
+    console.log(
+      "position:",
+      !window.isMaximized ? { x: 0, y: 0 } : window.position
+    );
+    console.log(
+      "size:",
+      !window.isMaximized
+        ? { width: "100%", height: "100%" }
+        : { width: 800, height: 600 }
+    );
 
     updateWindow({
       ...window,
@@ -62,7 +61,7 @@ export const Window: React.FC<WindowProps> = ({ window, isMobile }) => {
     });
   };
 
-  const Component = window.app.component; //window.app.component_path ? React.lazy(() => import(window.app.component_path)) : () => <div>Error: Application {window.app.name} can\`t be found</div>;
+  const Component = window.app.component;
 
   return (
     <Rnd
@@ -79,11 +78,11 @@ export const Window: React.FC<WindowProps> = ({ window, isMobile }) => {
       enableResizing={!window.isMaximized}
       minWidth={400}
       minHeight={300}
-      bounds="window"
+      bounds="parent"
       onDragStop={handleDragStop}
       onResize={handleResize}
       onMouseDown={() => bringToFront(window.id)}
-      onDragStart={()=>bringToFront(window.id)}
+      onDragStart={() => bringToFront(window.id)}
       dragHandleClassName="window-handle"
     >
       <div
@@ -107,7 +106,7 @@ export const Window: React.FC<WindowProps> = ({ window, isMobile }) => {
               </button>
             ) : (
               <>
-              {/* Minimize Window Button */}
+                {/* Minimize Window Button */}
                 <button
                   className="relative flex items-center justify-center w-10 h-10 hover:bg-gray-700/50 active:bg-gray-700 rounded-lg transition-colors group touch-manipulation"
                   aria-label="Minimize"
@@ -119,7 +118,7 @@ export const Window: React.FC<WindowProps> = ({ window, isMobile }) => {
                 <button
                   className="relative flex items-center justify-center w-10 h-10 hover:bg-gray-700/50 active:bg-gray-700 rounded-lg transition-colors group touch-manipulation"
                   aria-label="Maximize"
-                  onClick={()=>toggleMaximize()}
+                  onClick={() => toggleMaximize()}
                 >
                   <Square className="w-4 h-4 text-gray-300 group-hover:text-white transition-colors" />
                 </button>
@@ -170,7 +169,7 @@ export const Window: React.FC<WindowProps> = ({ window, isMobile }) => {
           </div>
           */}
         </div>
-        <div className="flex-1">
+        <div className="flex-1 p-4 overflow-auto scroll-rubber-band">
           {window.app.url && (
             <iframe
               src={window.app.url}

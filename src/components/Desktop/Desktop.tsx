@@ -5,12 +5,14 @@ import { Taskbar } from "./TaskBar";
 import { Window } from "./Window";
 import { useAppStore } from "../../store/useAppStore";
 import { useAuthStore } from "../../store/useAuthStore";
-import { defaultApps } from "../../hooks/useApps";
+//import { defaultApps } from "../../hooks/useApps";
+import { getDefaultApps } from "../../api/apps";
 import { useState } from "react";
 
 export const Desktop: React.FC = () => {
-  const { data: default_apps, isLoading, error } = defaultApps();
-  const { fetchInstalledApps, installedApps } = useAppStore();
+  //const { data: default_apps, isLoading, error } = defaultApps();
+  const default_apps = getDefaultApps();
+  const { fetchInstalledApps, installedApps, loading } = useAppStore();
   const { getUser } = useAuthStore();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
 
@@ -31,8 +33,8 @@ export const Desktop: React.FC = () => {
 
   const apps = default_apps?.concat(installedApps ? installedApps: []);
 
-  if (isLoading) return <div>Loading apps...</div>;
-  if (error) return <div>Error loading apps</div>;
+  if (loading) return <div>Loading apps...</div>;
+  //if (error) return <div>Error loading apps</div>;
 
   return (
     <div className="absolute inset-0 pb-16 pt-safe overflow-hidden"
@@ -44,6 +46,7 @@ export const Desktop: React.FC = () => {
       backgroundAttachment: 'fixed'
     }}>
       <div className="grid grid-cols-6 gap-4 p-4">
+
         {(apps ?? []).map((app) => (
           <AppIcon key={app.id} app={app} isMobile={isMobile} />
         ))}

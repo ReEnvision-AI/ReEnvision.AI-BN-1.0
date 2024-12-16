@@ -1,8 +1,8 @@
 import React, { LazyExoticComponent, ComponentType } from "react";
-import supabase from "../services/supabaseService";
+//import supabase from "../services/supabaseService";
 
-const { data: { user }} = await supabase.auth.getUser();
-const USER_ID = user ? user.id : null;
+//const { data: { user }} = await supabase.auth.getUser();
+//const USER_ID = user ? user.id : null;
 
 export type App = {
   id: string;
@@ -27,25 +27,17 @@ const DEFAULT_APPS: App[] = [
     type: "component",
     //url: "https://reai-apps.vercel.app/calculator",
     component: React.lazy(() => import("../components/apps/AppStore/AppStore")),
-    //component_path: null,
     preferred_width: 570,
     preferred_height: 840,
   },
   
 ];
 
-export async function fetchDefaultApps() : Promise<App[]> {
-  //const { data, error } = await supabase
-  //  .from("default_apps")
-  //  .select("*")
-  //  .order("created_at");
-  //
-  //if ( error ) throw error;
-
-  //return InternalAppSchema.array().parse(DEFAULT_APPS);
+export function getDefaultApps() : App[] {
   return DEFAULT_APPS;
 }
 
+/*
 export async function fetchInstallableApps() : Promise<App[]>{
   const { data: installable_apps, error } = await supabase
   .from('installable_apps')
@@ -93,3 +85,4 @@ export async function uninstallApp(app_id) {
     throw error;
   }
 }
+*/
