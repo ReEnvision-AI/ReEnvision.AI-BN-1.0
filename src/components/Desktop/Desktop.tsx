@@ -1,20 +1,25 @@
-import React from "react";
-import { defaultApps } from "../../hooks/useApps";
+import React, { useEffect } from "react";
 import { useStore } from "../../store/useStore";
 import { AppIcon } from "./AppIcon";
 import { Taskbar } from "./TaskBar";
 import { Window } from "./Window";
-import { useInstalledApps } from "../../contexts/useInstalledApps";
+//import { useInstalledApps } from "../../contexts/useInstalledApps";
+import { useAppStore } from "../../store/useAppStore";
+import { useAuthStore } from "../../store/useAuthStore";
+import { defaultApps } from "../../hooks/useApps";
 //import { useInstalledApps } from "../../hooks/useInstalledApps";
 
 export const Desktop: React.FC = () => {
   const { data: default_apps, isLoading, error } = defaultApps();
-  //const { installedApps } = useInstalledApps();
-  const { installedApps } = useInstalledApps();
+  const { fetchInstalledApps, installedApps } = useAppStore();
+  const { getUser } = useAuthStore();
+
+  useEffect(()=> {
+      fetchInstalledApps(getUser().id);
+  }, [fetchInstalledApps, getUser]);
 
   const { windows } = useStore();
 
-  console.log("Installed apps:", installedApps);
   const apps = default_apps?.concat(installedApps ? installedApps: []);
 
   if (isLoading) return <div>Loading apps...</div>;

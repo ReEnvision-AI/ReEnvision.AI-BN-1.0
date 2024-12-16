@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import { Rnd, RndDragEvent } from 'react-rnd';
 import { Maximize, Minimize, X } from 'lucide-react';
 import { useStore } from '../../store/useStore';
@@ -38,6 +38,7 @@ export const Window: React.FC<WindowProps> = ({ window }) => {
   };
 
   const toggleMaximize = () => {
+    console.log("toggleMaximize", window.isMaximized);
     updateWindow({
       ...window,
       isMaximized: !window.isMaximized,
@@ -50,10 +51,6 @@ export const Window: React.FC<WindowProps> = ({ window }) => {
 
   const Component = window.app.component; //window.app.component_path ? React.lazy(() => import(window.app.component_path)) : () => <div>Error: Application {window.app.name} can\`t be found</div>;
   
-  if (window.app.url) {
-    console.log("Opening url: ", window.app.url);
-  }
-
   return (
     <Rnd
       style={{

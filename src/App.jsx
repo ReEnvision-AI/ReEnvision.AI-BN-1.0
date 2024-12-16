@@ -4,7 +4,6 @@ import { AuthPage } from './components/Auth/AuthPage';
 import { useAuthStore } from './store/useAuthStore';
 //import { supabase } from './lib/supabase';
 import supabase from './services/supabaseService';
-import { InstalledAppsProvider } from './contexts/useInstalledApps';
 
 function App() {
   const { user, setUser, loading, setLoading } = useAuthStore();
@@ -74,7 +73,7 @@ function App() {
     );
   }
 
-  return user ? <InstalledAppsProvider userId={user.id}><Desktop /></InstalledAppsProvider> : <AuthPage />;
+  return user ? <Desktop />: <AuthPage />;
 }
 
 export default App;
