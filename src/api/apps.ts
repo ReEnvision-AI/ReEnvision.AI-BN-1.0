@@ -1,4 +1,4 @@
-import React from "react";
+import React, { LazyExoticComponent, ComponentType } from "react";
 import supabase from "../services/supabaseService";
 
 const { data: { user }} = await supabase.auth.getUser();
@@ -9,12 +9,14 @@ export type App = {
   name: string;
   icon: string;
   type?: string;
-  component?: typeof React.Fragment;
+  component?: LazyExoticComponent<ComponentType>;
   url?: string;
   preferred_width?: number;
   preferred_height?: number;
   min_width?: number;
   min_height?: number;
+  description?: string;
+  screenshots?: string[];
 }
 
 const DEFAULT_APPS: App[] = [
@@ -29,6 +31,7 @@ const DEFAULT_APPS: App[] = [
     preferred_width: 570,
     preferred_height: 840,
   },
+  
 ];
 
 export async function fetchDefaultApps() : Promise<App[]> {

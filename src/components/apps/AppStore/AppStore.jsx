@@ -4,6 +4,8 @@ import { Search, Download, Trash2, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 //import { AVAILABLE_APPS } from './apps-data';
 import * as AppInfo from '../../../hooks/useApps';
+//import { useInstalledApps } from '../../../hooks/useInstalledApps';
+import { useInstalledApps } from '../../../contexts/useInstalledApps';
 
 
 export function AppStore() {
@@ -11,6 +13,7 @@ export function AppStore() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [installing, setInstalling] = useState({});
   //const { installedApps, uninstallApp, installApp } = useApp();
+  const { installedApps, installApp, uninstallApp} = useInstalledApps();
   
   //const AVAILABLE_APPS = AppInfo.allApps();
   //const { data: apps, isLoading, error } = defaultApps();
@@ -48,6 +51,7 @@ export function AppStore() {
     setInstalling(prev => ({ ...prev, [app.id]: 'installing' }));
     //installApp(app);
     //AppInfo.installApp(app.id);
+    installApp(app.id);
     setInstalling(prev => ({ ...prev, [app.id]: 'success' }));
       setTimeout(() => {
         setInstalling(prev => ({ ...prev, [app.id]: null }));
@@ -63,6 +67,7 @@ export function AppStore() {
 
     setInstalling(prev => ({ ...prev, [app.id]: 'uninstalling' }));
     //uninstallApp(app);
+    uninstallApp(app.id);
     setInstalling(prev => ({ ...prev, [app.id]: 'success' }));
       setTimeout(() => {
         setInstalling(prev => ({ ...prev, [app.id]: null }));
@@ -86,6 +91,12 @@ export function AppStore() {
 
   const isAppInstalled = (app) => {
     //return installedApps?.includes(app);
+    console.log('Installed apps: ', installedApps)
+    console.log('Looking for:', app)
+    if (installedApps) {
+      return installedApps.find(item => item.id == app.id);
+    }
+    //return installedApps.includes(app);
     return false;
   };
 

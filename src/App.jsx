@@ -4,6 +4,7 @@ import { AuthPage } from './components/Auth/AuthPage';
 import { useAuthStore } from './store/useAuthStore';
 //import { supabase } from './lib/supabase';
 import supabase from './services/supabaseService';
+import { InstalledAppsProvider } from './contexts/useInstalledApps';
 
 function App() {
   const { user, setUser, loading, setLoading } = useAuthStore();
@@ -22,6 +23,7 @@ function App() {
     // Check active sessions and sets the user
     supabase.auth.getSession().then(({ data: { session } }) => {
       console.log("Session results:", session);
+      globalThis.user_id = session?.user ? session.user.id : null;
       setUser(session?.user ? {
         id: session.user.id,
         email: session.user.email ?? ''
@@ -33,6 +35,8 @@ function App() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log("Auth state change:", _event, session);
+      globalThis.user_id = session?.user ? session.user.id : null;
       setUser(session?.user ? {
         id: session.user.id,
         email: session.user.email ?? ''
@@ -70,7 +74,7 @@ function App() {
     );
   }
 
-  return user ? <Desktop /> : <AuthPage />;
+  return user ? <InstalledAppsProvider userId={user.id}><Desktop /></InstalledAppsProvider> : <AuthPage />;
 }
 
 export default App;

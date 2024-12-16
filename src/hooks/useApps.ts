@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchDefaultApps, fetchInstallableApps, installApp as install} from "../api/apps";
+import { fetchDefaultApps, fetchInstallableApps} from "../api/apps";
 
 export function defaultApps() {
   return useQuery({
@@ -14,11 +14,3 @@ export function availableApps() {
     queryFn: fetchInstallableApps
   });
 }
-
-export function installApp(app_id: string) {
-  return useQuery({
-    queryKey: ["install_app", app_id],
-    queryFn: () => install(app_id)
-  })
-}
-

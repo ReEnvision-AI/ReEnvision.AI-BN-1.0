@@ -3,7 +3,7 @@ import { useStore } from '../../store/useStore';
 //import { supabase } from '../api/supabase-client';
 import supabase from '../../services/supabaseService';
 //import { PowerOff } from '@tamagui/lucide-icons';
-import { PowerOff } from 'lucide-react';
+import { PowerCircle } from 'lucide-react';
 import { TaskbarItem } from './TaskBarItem';
 
 export const Taskbar: React.FC = () => {
@@ -20,7 +20,7 @@ export const Taskbar: React.FC = () => {
           <TaskbarItem key={window.id} window={window} />
         ))}
       </div>
-      <button type="button" onClick={handleLogout}><PowerOff></PowerOff></button>
+      <button type="button" onClick={handleLogout}><PowerCircle /></button>
       
     </div>
   );

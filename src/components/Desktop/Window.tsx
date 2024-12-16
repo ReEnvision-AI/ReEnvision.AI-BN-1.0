@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Rnd, RndDragEvent } from 'react-rnd';
 import { Maximize, Minimize, X } from 'lucide-react';
 import { useStore } from '../../store/useStore';
@@ -47,9 +47,12 @@ export const Window: React.FC<WindowProps> = ({ window }) => {
         : { width: 800, height: 600 },
     });
   };
-  
+
   const Component = window.app.component; //window.app.component_path ? React.lazy(() => import(window.app.component_path)) : () => <div>Error: Application {window.app.name} can\`t be found</div>;
   
+  if (window.app.url) {
+    console.log("Opening url: ", window.app.url);
+  }
 
   return (
     <Rnd
@@ -99,11 +102,12 @@ export const Window: React.FC<WindowProps> = ({ window }) => {
           </div>
         </div>
         <div className="flex-1">
-          {window.app.type === 'url' && window.app.url && (
+          {window.app.url && (
             <iframe
               src={window.app.url}
               className="w-full h-full border-0"
               title={window.app.name}
+              referrerPolicy='no-referrer'
             />
           )}
           {window.app.type === 'component' && (
