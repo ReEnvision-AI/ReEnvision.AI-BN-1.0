@@ -27,7 +27,7 @@ export const Desktop: React.FC = () => {
     return () => window.removeEventListener('reset', handleResize);
   });
 
-  const { windows } = useStore();
+  const { windows, isAppOen } = useStore();
 
   const apps = default_apps?.concat(installedApps ? installedApps: []);
 
@@ -50,7 +50,8 @@ export const Desktop: React.FC = () => {
       </div>
 
       {windows.map((window) => (
-        <Window key={window.id} window={window} isMobile={isMobile} />
+        isAppOen(window.app) && 
+        (<Window key={window.id} window={window} isMobile={isMobile} />)
       ))}
       
       <Taskbar />

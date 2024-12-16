@@ -11,12 +11,14 @@ interface AppIconProps {
 
 
 export const AppIcon: React.FC<AppIconProps> = ({app, isMobile}:{app: App, isMobile: boolean}) => {
-    const {openWindow} = useStore();
+    const {isAppOen, openWindow} = useStore();
     const Icon = iconMap[app.icon as keyof typeof iconMap] ? iconMap[app.icon as keyof typeof iconMap] : AppWindow;
 
     const handleOpen = () => {
-        console.log("About to open", app);
-        openWindow(app);
+        if(!isAppOen(app)) {
+            console.log("About to open", app);
+            openWindow(app);
+        }
     }
 
     return (
