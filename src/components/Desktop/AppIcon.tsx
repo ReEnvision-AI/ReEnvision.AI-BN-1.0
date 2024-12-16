@@ -1,19 +1,16 @@
 import React from 'react';
 import type { App } from '../../types';
-import { AppWindow, Calculator, FileText, Store } from 'lucide-react';
+import { AppWindow} from 'lucide-react';
 import { useStore } from '../../store/useStore';
+import { iconMap } from '../utils/iconmap';
 
 interface AppIconProps {
     app: App;
+    isMobile: boolean;
 }
 
-const iconMap = {
-    'calculator': Calculator,
-    'file-text': FileText,
-    'store': Store,
-};
 
-export const AppIcon: React.FC<AppIconProps> = ({app}) => {
+export const AppIcon: React.FC<AppIconProps> = ({app, isMobile}:{app: App, isMobile: boolean}) => {
     const {openWindow} = useStore();
     const Icon = iconMap[app.icon as keyof typeof iconMap] ? iconMap[app.icon as keyof typeof iconMap] : AppWindow;
 
@@ -27,8 +24,8 @@ export const AppIcon: React.FC<AppIconProps> = ({app}) => {
            className='flex flex-col items-center p-4 rounded-lg hover:bg-white/10 cursor-pointer transition-colors'
            onDoubleClick={handleOpen}
         >
-          <Icon className='w-12 h=12 text-white' />
-          <span className='mt-2 text-sm text-white'>{app.name}</span>
+          <Icon className="text-white mb-1 pointer-events-none" size={40}/>
+          <span className={`text-white text-center break-words line-clamp-2 truncate max-w-[70px] ${isMobile ? 'text-dynamic-sm' : 'text-xs'}`}>{app.name}</span>
         </div>
     ) 
 }

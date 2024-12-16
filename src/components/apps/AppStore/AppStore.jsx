@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Search, Download, Trash2, RefreshCw } from 'lucide-react';
-//import { useApp } from '../../../context/AppContext';
 import { motion, AnimatePresence } from 'framer-motion';
-//import { AVAILABLE_APPS } from './apps-data';
-import * as AppInfo from '../../../hooks/useApps';
 import { useAppStore } from '../../../store/useAppStore';
 import { useAuthStore } from '../../../store/useAuthStore';
-//import { useInstalledApps } from '../../../hooks/useInstalledApps';
-//import { useInstalledApps } from '../../../contexts/useInstalledApps';
-
 
 export function AppStore() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -25,9 +19,6 @@ export function AppStore() {
       installApp,
       uninstallApp} = useAppStore();
   
-  //const AVAILABLE_APPS = AppInfo.allApps();
-  //const { data: apps, isLoading, error } = defaultApps();
-  //const {data: AVAILABLE_APPS, isLoading, error} = AppInfo.availableApps();
   useEffect(() => {
     fetchInstallableApps();
   }, [fetchInstallableApps]);
@@ -40,9 +31,6 @@ export function AppStore() {
     console.log("Still loading...");
     return (<div>Getting available applications...</div>)
   }
-
-
-  //const installed_apps = AppInfo.userInstalledApps();
 
   const categories = [
     { id: 'all', name: 'All Apps' },
@@ -61,8 +49,6 @@ export function AppStore() {
 
   const handleInstall = async (app) => {
     setInstalling(prev => ({ ...prev, [app.id]: 'installing' }));
-    //installApp(app);
-    //AppInfo.installApp(app.id);
     installApp(getUser().id, app.id);
     setInstalling(prev => ({ ...prev, [app.id]: 'success' }));
       setTimeout(() => {
@@ -78,37 +64,18 @@ export function AppStore() {
     }
 
     setInstalling(prev => ({ ...prev, [app.id]: 'uninstalling' }));
-    //uninstallApp(app);
     uninstallApp(getUser().id, app.id);
     setInstalling(prev => ({ ...prev, [app.id]: 'success' }));
       setTimeout(() => {
         setInstalling(prev => ({ ...prev, [app.id]: null }));
       }, 1000);
-    /*try {
-      
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      uninstallApp(app.id);
-      setInstalling(prev => ({ ...prev, [app.id]: 'success' }));
-      setTimeout(() => {
-        setInstalling(prev => ({ ...prev, [app.id]: null }));
-      }, 1000);
-    } catch (error) {
-      console.error('Failed to uninstall app:', error);
-      setInstalling(prev => ({ ...prev, [app.id]: 'error' }));
-      setTimeout(() => {
-        setInstalling(prev => ({ ...prev, [app.id]: null }));
-      }, 2000);
-    }*/
+    
   };
 
   const isAppInstalled = (app) => {
-    //return installedApps?.includes(app);
-    console.log('Installed apps: ', installedApps)
-    console.log('Looking for:', app)
     if (installedApps) {
       return installedApps.find(item => item.id === app.id);
     }
-    //return installedApps.includes(app);
     return false;
   };
 
