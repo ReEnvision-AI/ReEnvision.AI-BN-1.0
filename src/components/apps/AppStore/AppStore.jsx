@@ -3,58 +3,78 @@ import { Search, Download, Trash2, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../../store/useAppStore';
 import { useAuthStore } from '../../../store/useAuthStore';
+import { iconMap } from '../../utils/iconmap';
 
 export function AppStore() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [installing, setInstalling] = useState({});
-  //const { installedApps, uninstallApp, installApp } = useApp();
-  //const { installedApps, installApp, uninstallApp} = useInstalledApps();
-  const { getUser} = useAuthStore();
-  const { installableApps,
-      installedApps,
-      loading,
-      fetchInstallableApps,
-      fetchInstalledApps,
-      installApp,
-      uninstallApp} = useAppStore();
-  
-  useEffect(() => {
-    fetchInstallableApps();
-  }, [fetchInstallableApps]);
-
-  useEffect(() => {
-    fetchInstalledApps(getUser().id);
-  }, [fetchInstalledApps])
-
-  if (loading) {
-    console.log("Still loading...");
-    return (<div>Getting available applications...</div>)
-  }
+  const { getUser } = useAuthStore();
+  const {
+    installableApps,
+    installedApps,
+    loading,
+    error,
+    fetchInstallableApps,
+    fetchInstalledApps,
+    installApp,
+    uninstallApp,
+  } = useAppStore();
 
   const categories = [
     { id: 'all', name: 'All Apps' },
     { id: 'productivity', name: 'Productivity' },
     { id: 'utilities', name: 'Utilities' },
-    { id: 'development', name: 'Development' }
+    { id: 'development', name: 'Development' },
   ];
 
-  //const filteredApps = AVAILABLE_APPS.filter(app => {
-    const filteredApps = installableApps.filter(app => {
-    const matchesSearch = app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         app.description.toLowerCase().includes(searchTerm.toLowerCase());
+  useEffect(() => {
+    const loadApps = async () => {
+      try {
+        await fetchInstallableApps();
+        const user = getUser();
+        if (user) {
+          await fetchInstalledApps(user.id);
+        }
+      } catch (err) {
+        console.error('Error loading apps:', err);
+      }
+    };
+
+    loadApps();
+  }, [fetchInstallableApps, fetchInstalledApps, getUser]);
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-red-400 text-xl">Error loading apps: {error}</div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-white text-xl">Loading apps...</div>
+      </div>
+    );
+  }
+
+  const filteredApps = installableApps.filter((app) => {
+    const matchesSearch =
+      app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      app.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || app.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   const handleInstall = async (app) => {
-    setInstalling(prev => ({ ...prev, [app.id]: 'installing' }));
+    setInstalling((prev) => ({ ...prev, [app.id]: 'installing' }));
     installApp(getUser().id, app.id);
-    setInstalling(prev => ({ ...prev, [app.id]: 'success' }));
-      setTimeout(() => {
-        setInstalling(prev => ({ ...prev, [app.id]: null }));
-      }, 1000);
-
+    setInstalling((prev) => ({ ...prev, [app.id]: 'success' }));
+    setTimeout(() => {
+      setInstalling((prev) => ({ ...prev, [app.id]: null }));
+    }, 1000);
   };
 
   const handleUninstall = async (app) => {
@@ -63,18 +83,17 @@ export function AppStore() {
       return;
     }
 
-    setInstalling(prev => ({ ...prev, [app.id]: 'uninstalling' }));
+    setInstalling((prev) => ({ ...prev, [app.id]: 'uninstalling' }));
     uninstallApp(getUser().id, app.id);
-    setInstalling(prev => ({ ...prev, [app.id]: 'success' }));
-      setTimeout(() => {
-        setInstalling(prev => ({ ...prev, [app.id]: null }));
-      }, 1000);
-    
+    setInstalling((prev) => ({ ...prev, [app.id]: 'success' }));
+    setTimeout(() => {
+      setInstalling((prev) => ({ ...prev, [app.id]: null }));
+    }, 1000);
   };
 
   const isAppInstalled = (app) => {
     if (installedApps) {
-      return installedApps.find(item => item.id === app.id);
+      return installedApps.find((item) => item.id === app.id);
     }
     return false;
   };
@@ -106,7 +125,6 @@ export function AppStore() {
       </div>
 
       <div className="flex-1 overflow-y-auto overscroll-contain p-4 scroll-smooth">
-        <AnimatePresence>
           <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {filteredApps.map(app => (
               <motion.div
@@ -120,7 +138,7 @@ export function AppStore() {
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <app.icon className="w-8 h-8 text-blue-400" />
+                    {React.createElement(iconMap[app.icon] ? iconMap[app.icon] : iconMap.app, { className: "w-8 h-8 text-blue-400" })}
                     <div>
                       <h3 className="text-lg font-medium text-white">{app.name}</h3>
                       <p className="text-sm text-gray-400">{app.category}</p>
@@ -194,7 +212,6 @@ export function AppStore() {
               </motion.div>
             ))}
           </div>
-        </AnimatePresence>
       </div>
     </div>
   );

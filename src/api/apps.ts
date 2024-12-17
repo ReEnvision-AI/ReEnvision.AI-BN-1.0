@@ -1,8 +1,4 @@
 import React, { LazyExoticComponent, ComponentType } from "react";
-//import supabase from "../services/supabaseService";
-
-//const { data: { user }} = await supabase.auth.getUser();
-//const USER_ID = user ? user.id : null;
 
 export type App = {
   id: string;
@@ -17,7 +13,8 @@ export type App = {
   min_height?: number;
   description?: string;
   screenshots?: string[];
-}
+  features?: string[];
+};
 
 const DEFAULT_APPS: App[] = [
   {
@@ -25,64 +22,21 @@ const DEFAULT_APPS: App[] = [
     name: "App Store",
     icon: "store",
     type: "component",
-    //url: "https://reai-apps.vercel.app/calculator",
     component: React.lazy(() => import("../components/apps/AppStore/AppStore")),
-    preferred_width: 570,
-    preferred_height: 840,
+    preferred_width: 900,
+    preferred_height: 600,
+    description: "Browse and install applications",
+    screenshots: [
+      "https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?w=800&q=80",
+    ],
+    features: [
+      "Browse available applications",
+      "Install and uninstall apps",
+      "View app details and screenshots",
+    ],
   },
-  
 ];
 
-export function getDefaultApps() : App[] {
+export function getDefaultApps(): App[] {
   return DEFAULT_APPS;
 }
-
-/*
-export async function fetchInstallableApps() : Promise<App[]>{
-  const { data: installable_apps, error } = await supabase
-  .from('installable_apps')
-  .select('*');
-
-  if (error) {
-    console.error("Error retrieving available apps:", error);
-    throw error;
-  }
-
-  return installable_apps;
-}
-
-export async function fetchInstalledApps() : Promise<App[]> {
-  const { data: installedApps, error } = await supabase.from('user_apps').select('*').eq('id', USER_ID);
-
-  if (error) {
-    console.error("Error retrieving apps for the user:", error);
-    throw error;
-  }
-  return installedApps
-}
-
-export async function installApp(app_id) {
-  const {data, error} = await supabase.from('user_apps').insert([
-    {
-      id: USER_ID,
-      app_id: app_id
-    }
-  ])
-
-  if (error) {
-    console.error("Error installing app for the user:", error);
-    throw error;
-  }
-
-  return data;
-}
-
-export async function uninstallApp(app_id) {
-  const { error } = await supabase.from('user_apps').delete().eq('app_id', app_id).eq('id', USER_ID);
-  
-  if(error) {
-    console.error("Error uninstalling app for the user:", error);
-    throw error;
-  }
-}
-*/

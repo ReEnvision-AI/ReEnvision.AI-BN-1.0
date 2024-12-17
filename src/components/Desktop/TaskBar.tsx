@@ -1,8 +1,6 @@
 import React from "react";
 import { useStore } from "../../store/useStore";
-//import { supabase } from '../api/supabase-client';
 import supabase from "../../services/supabaseService";
-//import { PowerOff } from '@tamagui/lucide-icons';
 import { Menu, Power } from "lucide-react";
 import { TaskbarItem } from "./TaskBarItem";
 
@@ -23,7 +21,7 @@ export const Taskbar: React.FC = () => {
             min-w-touch min-h-touch 
             flex items-center justify-center
             focus:outline-none focus:ring-2 focus:ring-white/20
-            touch-feedback
+            active:bg-white/20
           "
           aria-label="Open Start Menu"
         >
@@ -32,15 +30,17 @@ export const Taskbar: React.FC = () => {
 
         <div
           className="
-          flex-1 flex items-center justify-center 
-          gap-dynamic px-dynamic 
-          overflow-x-auto scroll-momentum
-        "
+            flex-1 flex items-center justify-center 
+            gap-dynamic px-dynamic 
+            overflow-x-auto scrollbar-hide
+            scroll-smooth
+          "
         >
           {windows.map((window) => (
-            <TaskbarItem key={window.id} window={window}/>
+            <TaskbarItem key={window.id} window={window} />
           ))}
         </div>
+
         <button
           type="button"
           onClick={handleLogout}
@@ -50,7 +50,7 @@ export const Taskbar: React.FC = () => {
             min-w-touch min-h-touch
             flex items-center justify-center
             focus:outline-none focus:ring-2 focus:ring-white/20
-            touch-feedback
+            active:bg-white/20
           "
           aria-label="Logout"
         >

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Rnd, RndDragEvent } from "react-rnd";
 import { ChevronDown, Minus, Square, X } from "lucide-react";
 import { useStore } from "../../store/useStore";
@@ -37,31 +37,39 @@ export const Window: React.FC<WindowProps> = ({ window, isMobile }) => {
     });
   };
 
-  const toggleMaximize = () => {
-    console.log("toggleMaximize", window.isMaximized);
-    console.log("isMaximized:", !window.isMaximized);
-    console.log(
-      "position:",
-      !window.isMaximized ? { x: 0, y: 0 } : window.position
-    );
-    console.log(
-      "size:",
-      !window.isMaximized
-        ? { width: "100%", height: "100%" }
-        : { width: 800, height: 600 }
-    );
-
+  const toggleMaximize = useCallback(() => {
     updateWindow({
       ...window,
       isMaximized: !window.isMaximized,
-      position: !window.isMaximized ? { x: 0, y: 0 } : window.position,
+      position: !window.isMaximized ? { x: 0, y: 0 } : { x: 50, y: 50 },
       size: !window.isMaximized
         ? { width: "100%", height: "100%" }
-        : { width: 800, height: 600 },
+        : { 
+            width: window.app.preferred_width || 800, 
+            height: window.app.preferred_height || 600 
+          },
     });
-  };
+  }, [window, updateWindow]);
+
+  const toggleMinimize = useCallback(() => {
+    updateWindow({
+      ...window,
+      isMinimized: !window.isMinimized,
+    });
+  }, [window, updateWindow]);
+
+  const handleClose = useCallback(() => {
+    closeWindow(window.id);
+  }, [window.id, closeWindow]);
 
   const Component = window.app.component;
+
+  // Set default position for mobile
+  React.useEffect(() => {
+    if (isMobile && !window.isMaximized) {
+      toggleMaximize();
+    }
+  }, [isMobile, window.isMaximized, toggleMaximize]);
 
   return (
     <Rnd
@@ -75,101 +83,83 @@ export const Window: React.FC<WindowProps> = ({ window, isMobile }) => {
         width: window.size.width,
         height: window.size.height,
       }}
-      enableResizing={!window.isMaximized}
-      minWidth={400}
-      minHeight={300}
+      position={window.position}
+      size={{
+        width: window.size.width,
+        height: window.size.height,
+      }}
+      enableResizing={!window.isMaximized && !isMobile}
+      disableDragging={isMobile || window.isMaximized}
+      minWidth={isMobile ? "100%" : (window.app.min_width || 400)}
+      minHeight={isMobile ? "100%" : (window.app.min_height || 300)}
       bounds="parent"
       onDragStop={handleDragStop}
       onResize={handleResize}
       onMouseDown={() => bringToFront(window.id)}
-      onDragStart={() => bringToFront(window.id)}
+      onTouchStart={() => bringToFront(window.id)}
       dragHandleClassName="window-handle"
     >
-      <div
-        className="flex flex-col h-full bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden"
-        onClick={() => bringToFront(window.id)}
-      >
-        <div className="window-handle flex items-center h-12 px-4 bg-gray-900 rounded-t-lg select-none">
-          {/* Window Name */}
-          <div className="flex-1 text-white font-medium truncate">
+      <div className="flex flex-col h-full bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden">
+        <div className="flex items-center justify-between h-12 px-4 bg-gray-900 rounded-t-lg">
+          {/* Window Title */}
+          <div className="window-handle flex-1 text-white font-medium truncate cursor-move">
             {window.app.name}
           </div>
 
-          {/* Window controls*/}
+          {/* Window Controls */}
           <div className="flex items-center gap-1">
             {isMobile ? (
-              <button
-                className="relative flex items-center justify-center w-12 h-12 hover:bg-gray-700/50 active:bg-gray-700 rounded-lg transition-colors group touch-manipulation"
-                aria-label="Minimize"
-              >
-                <ChevronDown className="w-6 h-6 text-gray-300 group-hover:text-white transition-colors" />
-              </button>
+              <>
+                <button
+                  type="button"
+                  className="p-3 hover:bg-gray-700/50 active:bg-gray-700 rounded-lg transition-colors"
+                  onClick={toggleMinimize}
+                >
+                  <ChevronDown className="w-6 h-6 text-gray-300" />
+                </button>
+                <button
+                  type="button"
+                  className="p-3 hover:bg-red-500/20 active:bg-red-500/30 rounded-lg transition-colors"
+                  onClick={handleClose}
+                >
+                  <X className="w-6 h-6 text-gray-300" />
+                </button>
+              </>
             ) : (
               <>
-                {/* Minimize Window Button */}
                 <button
-                  className="relative flex items-center justify-center w-10 h-10 hover:bg-gray-700/50 active:bg-gray-700 rounded-lg transition-colors group touch-manipulation"
-                  aria-label="Minimize"
+                  type="button"
+                  className="p-2 hover:bg-gray-700/50 active:bg-gray-700 rounded-lg transition-colors"
+                  onClick={toggleMinimize}
                 >
-                  <Minus className="w-4 h-4 text-gray-300 group-hover:text-white transition-colors" />
+                  <Minus className="w-4 h-4 text-gray-300" />
                 </button>
-
-                {/* Maximize Window Button */}
                 <button
-                  className="relative flex items-center justify-center w-10 h-10 hover:bg-gray-700/50 active:bg-gray-700 rounded-lg transition-colors group touch-manipulation"
-                  aria-label="Maximize"
-                  onClick={() => toggleMaximize()}
+                  type="button"
+                  className="p-2 hover:bg-gray-700/50 active:bg-gray-700 rounded-lg transition-colors"
+                  onClick={toggleMaximize}
                 >
-                  <Square className="w-4 h-4 text-gray-300 group-hover:text-white transition-colors" />
+                  <Square className="w-4 h-4 text-gray-300" />
+                </button>
+                <button
+                  type="button"
+                  className="p-2 hover:bg-red-500/20 active:bg-red-500/30 rounded-lg transition-colors"
+                  onClick={handleClose}
+                >
+                  <X className="w-4 h-4 text-gray-300" />
                 </button>
               </>
             )}
-            {/* Close Button */}
-            <button
-              className={`
-                      relative flex items-center justify-center
-                      ${isMobile ? "w-12 h-12" : "w-10 h-10"}
-                      hover:bg-red-500/20 active:bg-red-500/30
-                      rounded-lg transition-colors group touch-manipulation
-                    `}
-              aria-label="Close"
-              onClick={() => closeWindow(window.id)}
-            >
-              <X
-                className={`
-                      text-gray-300 group-hover:text-red-400 transition-colors
-                      ${isMobile ? "w-6 h-6" : "w-4 h-4"}
-                    `}
-              />
-            </button>
           </div>
-          {/** 
-          <div className="flex space-x-2">
-            <button
-              onClick={() => updateWindow({ ...window, isMinimized: true })}
-              className="p-1 hover:bg-gray-700 rounded"
-              title="Minimize"
-            >
-              <Minimize className="w-4 h-4" />
-            </button>
-            <button
-              onClick={toggleMaximize}
-              className="p-1 hover:bg-gray-700 rounded"
-              title="Maximize"
-            >
-              <Maximize className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => closeWindow(window.id)}
-              className="p-1 hover:bg-gray-700 rounded"
-              title="Close"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-          */}
         </div>
-        <div className="flex-1 p-4 overflow-auto scroll-rubber-band">
+
+        {/* Window Content */}
+        <div 
+          className={`
+            flex-1 overflow-auto overscroll-contain
+            ${isMobile ? 'p-2' : 'p-4'}
+          `}
+        >
           {window.app.url && (
             <iframe
               src={window.app.url}
@@ -179,7 +169,11 @@ export const Window: React.FC<WindowProps> = ({ window, isMobile }) => {
             />
           )}
           {window.app.type === "component" && (
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={
+              <div className="flex items-center justify-center h-full">
+                <div className="text-white">Loading...</div>
+              </div>
+            }>
               <Component />
             </Suspense>
           )}

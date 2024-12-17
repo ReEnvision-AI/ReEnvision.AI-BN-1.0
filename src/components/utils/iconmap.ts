@@ -1,9 +1,27 @@
-import { Store } from "lucide-react";
-import { FileText } from "lucide-react";
-import { Calculator } from "lucide-react";
+import { 
+  Store, 
+  FileText, 
+  Calculator,
+  Terminal,
+  Globe,           // Changed from Browser
+  MessageSquare,
+  Code,
+  Settings,
+  Bot,
+  AppWindow      // Added as another fallback
+} from "lucide-react";
 
 export const iconMap = {
-    'calculator': Calculator,
-    'file-text': FileText,
-    'store': Store,
+  'store': Store,
+  'file-text': FileText,
+  'calculator': Calculator,
+  'terminal': Terminal,
+  'browser': Globe,    // Changed to use Globe instead of Browser
+  'chat': MessageSquare,
+  'code': Code,
+  'settings': Settings,
+  'bot': Bot,
+  'app': AppWindow    // Added as default app icon
 };
+
+export type IconType = keyof typeof iconMap;
