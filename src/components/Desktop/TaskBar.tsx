@@ -1,8 +1,8 @@
-import React from "react";
-import { useStore } from "../../store/useStore";
-import supabase from "../../services/supabaseService";
-import { Menu, Power } from "lucide-react";
-import { TaskbarItem } from "./TaskBarItem";
+import React from 'react';
+import { useStore } from '../../store/useStore';
+import supabase from '../../services/supabaseService';
+import { Menu, Power } from 'lucide-react';
+import { TaskbarItem } from './TaskBarItem';
 
 export const Taskbar: React.FC = () => {
   const { windows } = useStore();

@@ -13,25 +13,25 @@
     user_id?: string;
 };*/
 
-import { App } from "../api/apps";
-export { App } from "../api/apps";
+import { App } from '../api/apps';
+export { App } from '../api/apps';
 
 export interface Window {
-    id: string;
-    app: App;
-    isMinimized: boolean;
-    isMaximized: boolean;
-    zIndex: number;
-    position: { x: number; y: number };
-    size: { width: number | string; height: number | string };
-  };
+  id: string;
+  app: App;
+  isMinimized: boolean;
+  isMaximized: boolean;
+  zIndex: number;
+  position: { x: number; y: number };
+  size: { width: number | string; height: number | string };
+}
 
-  export interface User {
-    id: string;
-    email: string;
-  }
-  
-  export interface AuthState {
-    user: User | null;
-    loading: boolean;
-  }
+export interface User {
+  id: string;
+  email: string;
+}
+
+export interface AuthState {
+  user: User | null;
+  loading: boolean;
+}

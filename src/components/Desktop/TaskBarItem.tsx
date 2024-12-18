@@ -1,7 +1,7 @@
-import React from "react";
-import { useStore } from "../../store/useStore";
-import type { Window } from "../../types";
-import { iconMap } from "../utils/iconmap";
+import React from 'react';
+import { useStore } from '../../store/useStore';
+import type { Window } from '../../types';
+import { iconMap } from '../utils/iconmap';
 
 interface TaskbarItemProps {
   window: Window;
@@ -19,18 +19,16 @@ export const TaskbarItem: React.FC<TaskbarItemProps> = ({ window }) => {
   };
 
   return (
-    <div className={`
+    <div
+      className={`
       flex flex-col items-center min-w-[80px] p-2 rounded-lg cursor-pointer
       touch-manipulation transition-colors hover-centered
-      ${window.isMinimized 
-        ? 'bg-white/10' 
-        : 'bg-white/20'}
+      ${window.isMinimized ? 'bg-white/10' : 'bg-white/20'}
     `}
-    onClick={handleClick}>
+      onClick={handleClick}
+    >
       <Icon className="w-6 h-6 text-white mb-1" />
-      <span className="text-white text-xs truncate max-w-[70px]">
-        {window.app.name}
-      </span>
+      <span className="text-white text-xs truncate max-w-[70px]">{window.app.name}</span>
     </div>
   );
 };

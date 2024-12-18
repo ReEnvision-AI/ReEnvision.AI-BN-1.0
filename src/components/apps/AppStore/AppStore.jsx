@@ -116,7 +116,7 @@ export function AppStore() {
           onChange={(e) => setSelectedCategory(e.target.value)}
           className="px-4 py-2 bg-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          {categories.map(category => (
+          {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}
             </option>
@@ -125,93 +125,93 @@ export function AppStore() {
       </div>
 
       <div className="flex-1 overflow-y-auto overscroll-contain p-4 scroll-smooth">
-          <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {filteredApps.map(app => (
-              <motion.div
-                key={app.id}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.2 }}
-                className="bg-gray-800/50 rounded-lg p-4 relative overflow-hidden"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    {React.createElement(iconMap[app.icon] ? iconMap[app.icon] : iconMap.app, { className: "w-8 h-8 text-blue-400" })}
-                    <div>
-                      <h3 className="text-lg font-medium text-white">{app.name}</h3>
-                      <p className="text-sm text-gray-400">{app.category}</p>
-                    </div>
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {filteredApps.map((app) => (
+            <motion.div
+              key={app.id}
+              layout
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              className="bg-gray-800/50 rounded-lg p-4 relative overflow-hidden"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  {React.createElement(iconMap[app.icon] ? iconMap[app.icon] : iconMap.app, {
+                    className: 'w-8 h-8 text-blue-400',
+                  })}
+                  <div>
+                    <h3 className="text-lg font-medium text-white">{app.name}</h3>
+                    <p className="text-sm text-gray-400">{app.category}</p>
                   </div>
-                  <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => isAppInstalled(app) ? handleUninstall(app) : handleInstall(app)}
-                    disabled={installing[app.id]}
-                    className={`
+                </div>
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => (isAppInstalled(app) ? handleUninstall(app) : handleInstall(app))}
+                  disabled={installing[app.id]}
+                  className={`
                       p-2 rounded-lg transition-colors relative min-w-touch min-h-touch
                       ${installing[app.id] ? 'cursor-not-allowed' : 'cursor-pointer'}
-                      ${isAppInstalled(app)
-                        ? 'text-red-400 hover:bg-red-400/10'
-                        : 'text-blue-400 hover:bg-blue-400/10'}
+                      ${isAppInstalled(app) ? 'text-red-400 hover:bg-red-400/10' : 'text-blue-400 hover:bg-blue-400/10'}
                     `}
-                  >
-                    <AnimatePresence mode="wait">
-                      {installing[app.id] ? (
-                        <motion.div
-                          key="installing"
-                          initial={{ opacity: 0, rotate: 0 }}
-                          animate={{ opacity: 1, rotate: 360 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.3 }}
-                        >
-                          <RefreshCw className="w-5 h-5 animate-spin" />
-                        </motion.div>
-                      ) : isAppInstalled(app) ? (
-                        <motion.div
-                          key="uninstall"
-                          initial={{ opacity: 0, scale: 0 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0 }}
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </motion.div>
-                      ) : (
-                        <motion.div
-                          key="install"
-                          initial={{ opacity: 0, scale: 0 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0 }}
-                        >
-                          <Download className="w-5 h-5" />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.button>
-                </div>
-                <p className="text-sm text-gray-300 mb-4">{app.description}</p>
-                {app.screenshots?.length > 0 && (
-                  <motion.img
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    src={app.screenshots[0]}
-                    alt={`${app.name} screenshot`}
-                    className="w-full h-40 object-cover rounded-lg"
-                  />
-                )}
-                {installing[app.id] && (
-                  <motion.div
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ duration: 1.5 }}
-                    className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"
-                    style={{ transformOrigin: 'left' }}
-                  />
-                )}
-              </motion.div>
-            ))}
-          </div>
+                >
+                  <AnimatePresence mode="wait">
+                    {installing[app.id] ? (
+                      <motion.div
+                        key="installing"
+                        initial={{ opacity: 0, rotate: 0 }}
+                        animate={{ opacity: 1, rotate: 360 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <RefreshCw className="w-5 h-5 animate-spin" />
+                      </motion.div>
+                    ) : isAppInstalled(app) ? (
+                      <motion.div
+                        key="uninstall"
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0 }}
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="install"
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0 }}
+                      >
+                        <Download className="w-5 h-5" />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
+              </div>
+              <p className="text-sm text-gray-300 mb-4">{app.description}</p>
+              {app.screenshots?.length > 0 && (
+                <motion.img
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  src={app.screenshots[0]}
+                  alt={`${app.name} screenshot`}
+                  className="w-full h-40 object-cover rounded-lg"
+                />
+              )}
+              {installing[app.id] && (
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 1.5 }}
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"
+                  style={{ transformOrigin: 'left' }}
+                />
+              )}
+            </motion.div>
+          ))}
+        </div>
       </div>
     </div>
   );

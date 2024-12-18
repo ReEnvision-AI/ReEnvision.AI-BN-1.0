@@ -3,7 +3,6 @@
 1. [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 2. [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started?queryGroups=platform&platform=macos)
 
-
 ## Get up and running
 
 ### Clone the repo
@@ -15,9 +14,10 @@ git clone git@github.com:ReEnvision-AI/ReEnvision.AI-BN-1.0.git
 cd ReEnvision.AI-BN-1.0
 ```
 
-### Install Depdencies 
+### Install Depdencies
 
 Next, install all the dependences:
+
 ```bash
 npm install
 ```
@@ -60,6 +60,7 @@ Set `VITE_SUPA_URL` and `VITE_SUPA_PUBLIC_KEY` to the values from above.
 ### Start the dev server
 
 To start the dev server, run:
+
 ```bash
 npm run dev
 ```

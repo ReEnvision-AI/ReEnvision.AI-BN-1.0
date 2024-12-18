@@ -1,6 +1,6 @@
-import { create } from "zustand";
-import type { Window } from "../types";
-import type { App } from "../api/apps";
+import { create } from 'zustand';
+import type { Window } from '../types';
+import type { App } from '../api/apps';
 
 export interface Store {
   windows: Window[];
@@ -55,9 +55,7 @@ export const useStore = create<Store>((set, get) => ({
 
   updateWindow: (updatedWindow) =>
     set((state) => ({
-      windows: state.windows.map((window) =>
-        window.id === updatedWindow.id ? updatedWindow : window
-      ),
+      windows: state.windows.map((window) => (window.id === updatedWindow.id ? updatedWindow : window)),
     })),
 
   bringToFront: (id) =>

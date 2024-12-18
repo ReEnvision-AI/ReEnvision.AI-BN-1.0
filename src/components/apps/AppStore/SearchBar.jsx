@@ -23,4 +23,4 @@ export function SearchBar({ value, onChange }) {
 SearchBar.propTypes = {
   value: PropTypes.string,
   onChange: PropTypes.func,
-}
+};

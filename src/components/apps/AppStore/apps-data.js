@@ -17,5 +17,5 @@ export const AVAILABLE_APPS = [
   AIDevStudioManifest,
   TextPadManifest,
   CalculatorManifest,
-  TerminalManifest
+  TerminalManifest,
 ];

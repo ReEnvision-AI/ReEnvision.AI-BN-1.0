@@ -1,4 +1,4 @@
-import React, { LazyExoticComponent, ComponentType } from "react";
+import React, { LazyExoticComponent, ComponentType } from 'react';
 
 export type App = {
   id: string;
@@ -18,22 +18,16 @@ export type App = {
 
 const DEFAULT_APPS: App[] = [
   {
-    id: "f8ad4840-ab66-478b-94dd-412cd9da678c",
-    name: "App Store",
-    icon: "store",
-    type: "component",
-    component: React.lazy(() => import("../components/apps/AppStore/AppStore")),
+    id: 'f8ad4840-ab66-478b-94dd-412cd9da678c',
+    name: 'App Store',
+    icon: 'store',
+    type: 'component',
+    component: React.lazy(() => import('../components/apps/AppStore/AppStore')),
     preferred_width: 900,
     preferred_height: 600,
-    description: "Browse and install applications",
-    screenshots: [
-      "https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?w=800&q=80",
-    ],
-    features: [
-      "Browse available applications",
-      "Install and uninstall apps",
-      "View app details and screenshots",
-    ],
+    description: 'Browse and install applications',
+    screenshots: ['https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?w=800&q=80'],
+    features: ['Browse available applications', 'Install and uninstall apps', 'View app details and screenshots'],
   },
 ];
 

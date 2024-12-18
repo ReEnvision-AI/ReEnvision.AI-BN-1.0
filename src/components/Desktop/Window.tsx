@@ -1,9 +1,9 @@
-import React, { useCallback } from "react";
-import { Rnd, RndDragEvent } from "react-rnd";
-import { ChevronDown, Minus, Square, X } from "lucide-react";
-import { useStore } from "../../store/useStore";
-import type { Window as WindowType } from "../../types";
-import { Suspense } from "react";
+import React, { useCallback } from 'react';
+import { Rnd, RndDragEvent } from 'react-rnd';
+import { ChevronDown, Minus, Square, X } from 'lucide-react';
+import { useStore } from '../../store/useStore';
+import type { Window as WindowType } from '../../types';
+import { Suspense } from 'react';
 
 interface WindowProps {
   window: WindowType;
@@ -25,7 +25,7 @@ export const Window: React.FC<WindowProps> = ({ window, isMobile }) => {
     _direction: string,
     ref: HTMLElement,
     _delta: { width: number; height: number },
-    position: { x: number; y: number }
+    position: { x: number; y: number },
   ) => {
     updateWindow({
       ...window,
@@ -43,10 +43,10 @@ export const Window: React.FC<WindowProps> = ({ window, isMobile }) => {
       isMaximized: !window.isMaximized,
       position: !window.isMaximized ? { x: 0, y: 0 } : { x: 50, y: 50 },
       size: !window.isMaximized
-        ? { width: "100%", height: "100%" }
-        : { 
-            width: window.app.preferred_width || 800, 
-            height: window.app.preferred_height || 600 
+        ? { width: '100%', height: '100%' }
+        : {
+            width: window.app.preferred_width || 800,
+            height: window.app.preferred_height || 600,
           },
     });
   }, [window, updateWindow]);
@@ -75,7 +75,7 @@ export const Window: React.FC<WindowProps> = ({ window, isMobile }) => {
     <Rnd
       style={{
         zIndex: window.zIndex,
-        display: window.isMinimized ? "none" : "block",
+        display: window.isMinimized ? 'none' : 'block',
       }}
       default={{
         x: window.position.x,
@@ -90,8 +90,8 @@ export const Window: React.FC<WindowProps> = ({ window, isMobile }) => {
       }}
       enableResizing={!window.isMaximized && !isMobile}
       disableDragging={isMobile || window.isMaximized}
-      minWidth={isMobile ? "100%" : (window.app.min_width || 400)}
-      minHeight={isMobile ? "100%" : (window.app.min_height || 300)}
+      minWidth={isMobile ? '100%' : window.app.min_width || 400}
+      minHeight={isMobile ? '100%' : window.app.min_height || 300}
       bounds="parent"
       onDragStop={handleDragStop}
       onResize={handleResize}
@@ -102,9 +102,7 @@ export const Window: React.FC<WindowProps> = ({ window, isMobile }) => {
       <div className="flex flex-col h-full bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden">
         <div className="flex items-center justify-between h-12 px-4 bg-gray-900 rounded-t-lg">
           {/* Window Title */}
-          <div className="window-handle flex-1 text-white font-medium truncate cursor-move">
-            {window.app.name}
-          </div>
+          <div className="window-handle flex-1 text-white font-medium truncate cursor-move">{window.app.name}</div>
 
           {/* Window Controls */}
           <div className="flex items-center gap-1">
@@ -154,7 +152,7 @@ export const Window: React.FC<WindowProps> = ({ window, isMobile }) => {
         </div>
 
         {/* Window Content */}
-        <div 
+        <div
           className={`
             flex-1 overflow-auto overscroll-contain
             ${isMobile ? 'p-2' : 'p-4'}
@@ -168,12 +166,14 @@ export const Window: React.FC<WindowProps> = ({ window, isMobile }) => {
               referrerPolicy="no-referrer"
             />
           )}
-          {window.app.type === "component" && (
-            <Suspense fallback={
-              <div className="flex items-center justify-center h-full">
-                <div className="text-white">Loading...</div>
-              </div>
-            }>
+          {window.app.type === 'component' && (
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-white">Loading...</div>
+                </div>
+              }
+            >
               <Component />
             </Suspense>
           )}

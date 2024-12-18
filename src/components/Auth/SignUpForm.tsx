@@ -19,11 +19,7 @@ export const SignUpForm: React.FC = () => {
   return (
     <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Create Account</h2>
-      {error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
-          {error}
-        </div>
-      )}
+      {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
