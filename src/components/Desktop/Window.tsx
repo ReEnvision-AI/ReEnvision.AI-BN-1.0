@@ -62,7 +62,7 @@ export const Window: React.FC<WindowProps> = ({ window, isMobile }) => {
     closeWindow(window.id);
   }, [window.id, closeWindow]);
 
-  const Component = window.app.component;
+  const Component = window.app.component as React.ElementType;
 
   // Set default position for mobile
   React.useEffect(() => {

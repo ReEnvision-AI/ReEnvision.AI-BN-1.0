@@ -15,7 +15,9 @@ export const Desktop: React.FC = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
 
   useEffect(() => {
-    fetchInstalledApps(getUser().id);
+    const user = getUser();
+    if(user)
+      fetchInstalledApps(user.id);
   }, [fetchInstalledApps, getUser]);
 
   useEffect(() => {
