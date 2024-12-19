@@ -12,13 +12,12 @@
     "format": "prettier -w ."
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.33.1",
     "@radix-ui/react-tabs": "^1.1.1",
+    "@reai/os-services": "github:ReEnvision-AI/reai-os-services",
     "@supabase/supabase-js": "^2.47.6",
     "clsx": "^2.1.1",
     "framer-motion": "^11.14.1",
     "lucide-react": "^0.468.0",
-    "openai": "^4.77.0",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
