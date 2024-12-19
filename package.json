@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "rm -rf dist && vite build",
     "preview": "vite preview",
     "preview:host": "vite preview --host",
     "lint": "eslint src --report-unused-disable-directives --max-warnings 0",
