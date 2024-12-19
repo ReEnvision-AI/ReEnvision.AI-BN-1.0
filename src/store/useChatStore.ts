@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { aiService, type Model, type Provider } from '@reai/os-services/aiService';
+import { aiService, type Model, type Provider } from '../services/aiService';
 
 interface SystemStats {
     cpu: number;
