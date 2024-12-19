@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Download, Trash2, RefreshCw } from 'lucide-react';
 
 export function AppDetails({ app, onInstall, onUninstall, isInstalled, installing }) {
@@ -7,7 +9,7 @@ export function AppDetails({ app, onInstall, onUninstall, isInstalled, installin
         <div className="bg-gray-700/30 p-4 rounded-lg">
           <app.icon className="w-16 h-16 text-gray-300" />
         </div>
-        
+
         <div className="flex-1">
           <div className="flex items-center justify-between gap-4">
             <h2 className="text-2xl font-bold text-white">{app.name}</h2>
@@ -18,9 +20,11 @@ export function AppDetails({ app, onInstall, onUninstall, isInstalled, installin
                 px-4 py-2 rounded-lg font-medium
                 flex items-center gap-2
                 transition-colors focus:outline-none focus:ring-2
-                ${isInstalled
-                  ? 'bg-red-500/20 text-red-300 hover:bg-red-500/30 focus:ring-red-500/50'
-                  : 'bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 focus:ring-blue-500/50'}
+                ${
+                  isInstalled
+                    ? 'bg-red-500/20 text-red-300 hover:bg-red-500/30 focus:ring-red-500/50'
+                    : 'bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 focus:ring-blue-500/50'
+                }
                 ${installing ? 'opacity-50 cursor-not-allowed' : ''}
               `}
             >
@@ -42,7 +46,7 @@ export function AppDetails({ app, onInstall, onUninstall, isInstalled, installin
               )}
             </button>
           </div>
-          
+
           <p className="text-gray-400 mt-2">{app.description}</p>
         </div>
       </div>
@@ -78,8 +82,7 @@ export function AppDetails({ app, onInstall, onUninstall, isInstalled, installin
               <div className="grid grid-cols-2 gap-4 text-sm">
                 {Object.entries(app.requirements).map(([key, value]) => (
                   <div key={key}>
-                    <span className="text-gray-400">{key}:</span>{' '}
-                    <span className="text-white">{value}</span>
+                    <span className="text-gray-400">{key}:</span> <span className="text-white">{value}</span>
                   </div>
                 ))}
               </div>
@@ -90,3 +93,11 @@ export function AppDetails({ app, onInstall, onUninstall, isInstalled, installin
     </div>
   );
 }
+
+AppDetails.propTypes = {
+  app: PropTypes.object,
+  onInstall: PropTypes.func,
+  onUninstall: PropTypes.func,
+  isInstalled: PropTypes.func,
+  installing: PropTypes.string,
+};

@@ -1,100 +1,85 @@
-import { useState, useEffect } from 'react';
-import { Login } from './components/Login';
+import React, { useEffect, useState } from 'react';
 import { Desktop } from './components/Desktop/Desktop';
-import { TaskBar } from './components/TaskBar/TaskBar';
-import { WindowManager } from './components/WindowManager';
-import { AppContextProvider } from './context/AppContext';
-import { Toaster } from 'react-hot-toast';
+import { AuthPage } from './components/Auth/AuthPage';
+import { useAuthStore } from './store/useAuthStore';
+//import { supabase } from './lib/supabase';
+import supabase from './services/supabaseService';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [windows, setWindows] = useState([]);
+  const { user, setUser, loading, setLoading } = useAuthStore();
+  const [configError, setConfigError] = useState(false);
 
   useEffect(() => {
-    const checkAuth = () => {
-      try {
-        const currentUser = localStorage.getItem('currentUser');
-        const user = localStorage.getItem('user');
-        
-        if (!currentUser || !user) {
-          handleLogout();
-          return;
-        }
+    // Check if Supabase is properly configured
+    console.log('Checking variables...');
+    if (!import.meta.env.VITE_SUPA_URL || !import.meta.env.VITE_SUPA_PUBLIC_KEY) {
+      setConfigError(true);
+      setLoading(false);
+      return;
+    }
 
-        const storedUser = JSON.parse(user);
-        const { username } = JSON.parse(currentUser);
+    console.log('Checking active sessions...');
+    // Check active sessions and sets the user
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Session results:', session);
+      globalThis.user_id = session?.user ? session.user.id : null;
+      setUser(
+        session?.user
+          ? {
+              id: session.user.id,
+              email: session.user.email ?? '',
+            }
+          : null,
+      );
+      setLoading(false);
+    });
 
-        if (username === storedUser.username) {
-          setIsLoggedIn(true);
-        } else {
-          handleLogout();
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error);
-        handleLogout();
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    // Listen for changes on auth state (sign in, sign out, etc.)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('Auth state change:', _event, session);
+      globalThis.user_id = session?.user ? session.user.id : null;
+      setUser(
+        session?.user
+          ? {
+              id: session.user.id,
+              email: session.user.email ?? '',
+            }
+          : null,
+      );
+    });
 
-    checkAuth();
-  }, []);
+    return () => subscription.unsubscribe();
+  }, [setUser, setLoading]);
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('user');
-    setIsLoggedIn(false);
-    setWindows([]);
-  };
-
-  if (isLoading) {
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <div className="text-white text-lg">Loading...</div>
+      <div className="min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 flex items-center justify-center">
+        <div className="text-white text-xl">Loading...</div>
       </div>
     );
   }
 
-  return (
-    <AppContextProvider>
-      {!isLoggedIn ? (
-        <Login onLogin={handleLogin} />
-      ) : (
-        <div className="h-screen w-screen overflow-hidden bg-gray-900 flex flex-col">
-          <div className="flex-1 relative overflow-hidden">
-            <Desktop windows={windows} setWindows={setWindows}>
-              <WindowManager windows={windows} setWindows={setWindows} />
-            </Desktop>
-          </div>
-          <TaskBar 
-            windows={windows} 
-            setWindows={setWindows} 
-            onLogout={handleLogout}
-          />
+  if (configError) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 flex items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Configuration Error</h2>
+          <p className="text-gray-700">
+            Supabase environment variables are not configured. Please add the following to your .env file:
+          </p>
+          <pre className="bg-gray-100 p-4 rounded mt-4 text-sm overflow-x-auto">
+            VITE_SUPA_URL=your-project-url{'\n'}
+            VITE_SUPA_PUBLIC_KEY=your-anon-key
+          </pre>
+          <p className="mt-4 text-gray-700">You can find these values in your Supabase project settings.</p>
         </div>
-      )}
-      <Toaster 
-        position="bottom-right"
-        toastOptions={{
-          style: {
-            background: '#333',
-            color: '#fff',
-          },
-          success: {
-            duration: 3000,
-          },
-          error: {
-            duration: 4000,
-          },
-        }}
-      />
-    </AppContextProvider>
-  );
+      </div>
+    );
+  }
+
+  return user ? <Desktop /> : <AuthPage />;
 }
 
 export default App;

@@ -1,9 +1,11 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Download, Trash2, RefreshCw } from 'lucide-react';
 
 export function AppGrid({ apps, onSelect, selectedId, installing, isInstalled }) {
   return (
     <div className="grid gap-4">
-      {apps.map(app => (
+      {apps.map((app) => (
         <button
           key={app.id}
           onClick={() => onSelect(app)}
@@ -16,9 +18,7 @@ export function AppGrid({ apps, onSelect, selectedId, installing, isInstalled })
           <app.icon className="w-8 h-8 text-gray-300 shrink-0" />
           <div className="flex-1 min-w-0">
             <div className="font-medium text-white truncate">{app.name}</div>
-            <div className="text-sm text-gray-400 truncate">
-              {app.description.split('.')[0]}
-            </div>
+            <div className="text-sm text-gray-400 truncate">{app.description.split('.')[0]}</div>
           </div>
           <div className="shrink-0">
             {installing[app.id] ? (
@@ -34,3 +34,11 @@ export function AppGrid({ apps, onSelect, selectedId, installing, isInstalled })
     </div>
   );
 }
+
+AppGrid.propTypes = {
+  apps: PropTypes.array,
+  onSelect: PropTypes.func,
+  selectedId: PropTypes.string,
+  installing: PropTypes.array,
+  isInstalled: PropTypes.func,
+};
