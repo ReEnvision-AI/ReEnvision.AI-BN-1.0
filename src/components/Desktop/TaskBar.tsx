@@ -1,5 +1,5 @@
 import React from 'react';
-import { useStore } from '../../store/useStore';
+import { useStore } from '../../store/useWindowStore';
 import supabase from '../../services/supabaseService';
 import { Menu, Power } from 'lucide-react';
 import { TaskbarItem } from './TaskBarItem';

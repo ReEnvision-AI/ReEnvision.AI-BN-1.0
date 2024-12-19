@@ -29,6 +29,24 @@ const DEFAULT_APPS: App[] = [
     screenshots: ['https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?w=800&q=80'],
     features: ['Browse available applications', 'Install and uninstall apps', 'View app details and screenshots'],
   },
+  {
+    id: 'fd3fa276-c543-4081-999b-459a688bd7a7',
+    name: 'Chatty AI',
+    icon: 'messagesquare',
+    type: 'component',
+    component: React.lazy(() => import('../components/apps/ChattyAI/ChattyAI')),
+    preferred_width: 1200,
+    preferred_height: 800,
+    description: 'Local LLM inference engine with chat interface',
+    screenshots: ['https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80'],
+    features: [
+      'Local LLM inference using WebGPU',
+      'Real-time chat interface',
+      'Multiple model support',
+      'Response streaming',
+      'Resource monitoring',
+    ],
+  },
 ];
 
 export function getDefaultApps(): App[] {

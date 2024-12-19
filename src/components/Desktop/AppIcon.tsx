@@ -1,7 +1,7 @@
 import React from 'react';
 import type { App } from '../../types';
 import { AppWindow } from 'lucide-react';
-import { useStore } from '../../store/useStore';
+import { useStore } from '../../store/useWindowStore';
 import { iconMap } from '../utils/iconmap';
 
 interface AppIconProps {

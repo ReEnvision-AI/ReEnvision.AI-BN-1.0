@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { Rnd, RndDragEvent } from 'react-rnd';
 import { ChevronDown, Minus, Square, X } from 'lucide-react';
-import { useStore } from '../../store/useStore';
+import { useStore } from '../../store/useWindowStore';
 import type { Window as WindowType } from '../../types';
 import { Suspense } from 'react';
 

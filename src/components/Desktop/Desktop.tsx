@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useStore } from '../../store/useStore';
+import { useStore } from '../../store/useWindowStore';
 import { AppIcon } from './AppIcon';
 import { Taskbar } from './TaskBar';
 import { Window } from './Window';

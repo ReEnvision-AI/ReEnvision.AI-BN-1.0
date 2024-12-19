@@ -1,5 +1,5 @@
 import React from 'react';
-import { useStore } from '../../store/useStore';
+import { useStore } from '../../store/useWindowStore';
 import type { Window } from '../../types';
 import { iconMap } from '../utils/iconmap';
 

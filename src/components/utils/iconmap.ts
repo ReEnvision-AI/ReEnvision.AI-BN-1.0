@@ -21,6 +21,7 @@ export const iconMap = {
   code: Code,
   settings: Settings,
   bot: Bot,
+  messagesquare: MessageSquare,
   app: AppWindow, // Added as default app icon
 };
 
