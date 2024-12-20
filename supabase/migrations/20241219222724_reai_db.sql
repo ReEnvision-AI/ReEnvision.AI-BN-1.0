@@ -115,6 +115,10 @@ AS $function$begin
 end;$function$
 ;
 
+create or replace trigger on_auth_user_created
+after insert on auth.users for each row
+execute procedure public.handle_new_user ();
+
 grant delete on table "public"."app_categories" to "anon";
 
 grant insert on table "public"."app_categories" to "anon";
