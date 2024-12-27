@@ -14,5 +14,13 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      // Prevent WebSocket connection errors in WebContainer
+      window.addEventListener('error', (event) => {
+        if (event.message.includes('WebSocket connection')) {
+          event.preventDefault();
+        }
+      });
+    </script>
   </body>
 </html>
