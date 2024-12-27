@@ -1,30 +1,84 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Send, Loader2, Bot, User, Trash2, Settings as SettingsIcon } from 'lucide-react';
-import { Settings } from './Settings';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { Send, Loader2, Bot, User, Settings as SettingsIcon, MessageSquare, PlusCircle } from 'lucide-react';
 import { useChatStore } from '../../../store/useChatStore';
+import { motion, AnimatePresence } from 'framer-motion';
 
-export function ChatInterface() {
+interface ChatInterfaceProps {
+  onOpenSettings: () => void;
+}
+
+export function ChatInterface({ onOpenSettings }: ChatInterfaceProps) {
   const [input, setInput] = useState('');
-  const [showSettings, setShowSettings] = useState(false);
-  const messagesEndRef = useRef(null);
+  const [autoScroll, setAutoScroll] = useState(true);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const lastMessageRef = useRef<HTMLDivElement>(null);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
   const { 
-    messages, 
+    messages = [], // Provide default empty array
     isGenerating, 
     chat, 
-    clearChat,
     activeModelId,
-    apiKey
+    apiKey,
+    currentChatId,
+    createNewChat,
+    apiProvider
   } = useChatStore();
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
+    if (!autoScroll || !messagesEndRef.current) return;
+
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+
+    scrollTimeoutRef.current = setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ 
+        behavior,
+        block: 'end'
+      });
+    }, 50);
+  }, [autoScroll]);
+
+  const handleScroll = useCallback(() => {
+    if (!scrollContainerRef.current) return;
+    
+    const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+    const isAtBottom = Math.abs(scrollHeight - clientHeight - scrollTop) < 50;
+    
+    if (isAtBottom !== autoScroll) {
+      setAutoScroll(isAtBottom);
+    }
+  }, [autoScroll]);
+
+  const throttledScrollHandler = useCallback(() => {
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+    scrollTimeoutRef.current = setTimeout(handleScroll, 100);
+  }, [handleScroll]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    // Only scroll if we have messages
+    if (messages && messages.length > 0) {
+      scrollToBottom();
+    }
+    
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, [messages, scrollToBottom]);
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    if (isGenerating) {
+      scrollToBottom('smooth');
+    }
+  }, [isGenerating, scrollToBottom]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isGenerating) return;
 
@@ -33,78 +87,145 @@ export function ChatInterface() {
       return;
     }
 
-    if (!apiKey && activeModelId.includes('gpt')) {
-      setShowSettings(true);
+    if (!currentChatId) {
+      alert('Please create a new chat first');
       return;
     }
 
+    setAutoScroll(true);
+    scrollToBottom('instant');
     await chat(input);
     setInput('');
   };
 
-  if (showSettings) {
-    return <Settings onClose={() => setShowSettings(false)} />;
+  const formatTimestamp = (timestamp?: number) => {
+    if (!timestamp) return '';
+    return new Date(timestamp).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  // Show configuration message if no API is configured
+  if (!apiKey && !apiProvider) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center p-4">
+        <SettingsIcon className="w-12 h-12 text-gray-400 mb-4" />
+        <h3 className="text-lg font-medium text-white mb-2">AI Service Not Configured</h3>
+        <p className="text-gray-400 mb-4">Please configure your AI service settings to start chatting</p>
+        <button
+          onClick={onOpenSettings}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Configure AI Service
+        </button>
+      </div>
+    );
+  }
+
+  // Show welcome message if no chat is selected
+  if (!currentChatId) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center p-4">
+        <MessageSquare className="w-12 h-12 text-gray-400 mb-4" />
+        <h3 className="text-lg font-medium text-white mb-2">Welcome to Chatty AI</h3>
+        <p className="text-gray-400 mb-6">Start a new conversation to begin chatting</p>
+        <button
+          onClick={createNewChat}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+        >
+          <PlusCircle className="w-5 h-5" />
+          New Chat
+        </button>
+      </div>
+    );
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between p-2 border-b border-gray-800">
+    <div className="flex flex-col h-full overflow-hidden">
+      <div className="flex-none flex items-center justify-between p-2 border-b border-gray-800">
         <h2 className="text-sm font-medium text-gray-400">Chat Session</h2>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowSettings(true)}
-            className="p-2 hover:bg-gray-800 rounded-lg text-gray-400"
-            title="Settings"
-          >
-            <SettingsIcon className="w-4 h-4" />
-          </button>
-          <button
-            onClick={clearChat}
-            className="p-2 hover:bg-gray-800 rounded-lg text-gray-400"
-            title="Clear chat"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </div>
+        <button
+          onClick={onOpenSettings}
+          className="p-2 hover:bg-gray-800 rounded-lg text-gray-400"
+          title="Settings"
+        >
+          <SettingsIcon className="w-4 h-4" />
+        </button>
       </div>
 
-      <div className="flex-1 overflow-auto p-4 space-y-4">
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`
-              flex gap-3 ${message.role === 'user' ? 'justify-end' : ''}
-            `}
-          >
-            {message.role !== 'user' && (
-              <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                <Bot className="w-5 h-5 text-blue-400" />
-              </div>
-            )}
-            <div
+      <div 
+        ref={scrollContainerRef}
+        onScroll={throttledScrollHandler}
+        className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth"
+      >
+        <AnimatePresence initial={false}>
+          {messages?.map((message, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+              ref={index === messages.length - 1 ? lastMessageRef : null}
               className={`
-                max-w-[80%] rounded-lg p-3
-                ${message.role === 'user'
-                  ? 'bg-blue-500/10 text-blue-100'
-                  : message.role === 'error'
-                  ? 'bg-red-500/10 text-red-200'
-                  : 'bg-gray-800 text-gray-100'}
+                flex gap-3 ${message.role === 'user' ? 'justify-end' : ''}
               `}
             >
-              {message.content}
-            </div>
-            {message.role === 'user' && (
-              <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                <User className="w-5 h-5 text-blue-400" />
+              {message.role !== 'user' && (
+                <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                  <Bot className="w-5 h-5 text-blue-400" />
+                </div>
+              )}
+              <div className="flex flex-col gap-1 max-w-[80%]">
+                <div
+                  className={`
+                    rounded-lg p-3
+                    ${message.role === 'user'
+                      ? 'bg-blue-500/10 text-blue-100'
+                      : message.role === 'error'
+                      ? 'bg-red-500/10 text-red-200'
+                      : 'bg-gray-800 text-gray-100'}
+                  `}
+                >
+                  {message.content}
+                </div>
+                {message.timestamp && (
+                  <div className="text-xs text-gray-500 px-1">
+                    {formatTimestamp(message.timestamp)}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
+              {message.role === 'user' && (
+                <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                  <User className="w-5 h-5 text-blue-400" />
+                </div>
+              )}
+            </motion.div>
+          ))}
+        </AnimatePresence>
+        <div ref={messagesEndRef} className="h-1" />
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 border-t border-gray-800">
-        <div className="flex gap-2">
+      <AnimatePresence>
+        {!autoScroll && messages?.length > 0 && (
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            onClick={() => {
+              setAutoScroll(true);
+              scrollToBottom();
+            }}
+            className="absolute bottom-20 right-4 px-4 py-2 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+          >
+            Scroll to Bottom
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      <div className="flex-none p-4 border-t border-gray-800">
+        <form onSubmit={handleSubmit} className="flex gap-2">
           <input
             type="text"
             value={input}
@@ -124,8 +245,8 @@ export function ChatInterface() {
               <Send className="w-5 h-5" />
             )}
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

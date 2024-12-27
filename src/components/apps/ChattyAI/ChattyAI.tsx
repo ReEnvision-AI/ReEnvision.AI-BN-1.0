@@ -1,73 +1,91 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChatInterface } from './ChatInterface';
 import { ModelManager } from './ModelManager';
-import { APIEndpoints } from './APEndpoints';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/tabs';
+import { HelpContent } from './HelpContent';
+import { ChatHistory } from './ChatHistory';
+import { Settings } from './Settings';
+import * as Tabs from '@radix-ui/react-tabs';
 import { ResourceMonitor } from './ResourceMonitor';
+import { Settings as SettingsIcon } from 'lucide-react';
+import { useChatStore } from '../../../store/useChatStore';
 
-// Ensure window stays within bounds
 const ChattyAI = () => {
-  // Ensure window stays within bounds
+  const [showSettings, setShowSettings] = useState(false);
+  const { apiKey, apiProvider } = useChatStore();
+
   useEffect(() => {
-    const handleResize = () => {
-      const isMobile = window.innerWidth <= 640;
-      if (!isMobile) {
-        const windowElement = document.querySelector('.window-drag-handle')?.parentElement;
-        if (!windowElement) return;
+    if (!apiKey && !apiProvider) {
+      setShowSettings(true);
+    }
+  }, [apiKey, apiProvider]);
 
-        const rect = windowElement.getBoundingClientRect();
-        const screenWidth = window.innerWidth;
-        const screenHeight = window.innerHeight;
-
-        // Check if window is outside bounds
-        if (rect.right > screenWidth) {
-          windowElement.style.transform = `translate(${screenWidth - rect.width - 16}px, ${rect.top}px)`;
-        }
-        if (rect.bottom > screenHeight) {
-          windowElement.style.transform = `translate(${rect.left}px, ${screenHeight - rect.height - 16}px)`;
-        }
-        if (rect.left < 0) {
-          windowElement.style.transform = `translate(16px, ${rect.top}px)`;
-        }
-        if (rect.top < 0) {
-          windowElement.style.transform = `translate(${rect.left}px, 16px)`;
-        }
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    // Initial check
-    handleResize();
-
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  if (showSettings) {
+    return <Settings onClose={() => setShowSettings(false)} />;
+  }
 
   return (
     <div className="h-full flex flex-col bg-gray-900">
-      <div className="flex-1 flex">
-        <div className="flex-1 flex flex-col">
-          <Tabs defaultValue="chat" className="flex-1 flex flex-col">
-            <TabsList className="border-b border-gray-800 px-4">
-              <TabsTrigger value="chat">Chat</TabsTrigger>
-              <TabsTrigger value="models">Models</TabsTrigger>
-              <TabsTrigger value="api">API</TabsTrigger>
-            </TabsList>
+      <div className="flex-none border-b border-gray-800 p-2 flex items-center justify-between">
+        <h2 className="text-lg font-medium text-white">Chatty AI</h2>
+        <button
+          onClick={() => setShowSettings(true)}
+          className="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition-colors"
+          title="AI Service Settings"
+        >
+          <SettingsIcon className="w-5 h-5" />
+        </button>
+      </div>
 
-            <TabsContent value="chat" className="flex-1 p-0">
-              <ChatInterface />
-            </TabsContent>
+      <div className="flex-1 flex overflow-hidden">
+        <div className="w-64 border-r border-gray-800 flex flex-col overflow-hidden">
+          <div className="p-3 border-b border-gray-800">
+            <h2 className="text-sm font-medium text-gray-400">Chat History</h2>
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            <ChatHistory />
+          </div>
+        </div>
+        
+        <div className="flex-1 flex flex-col min-w-0">
+          <Tabs.Root defaultValue="chat" className="flex-1 flex flex-col overflow-hidden">
+            <Tabs.List className="flex border-b border-gray-800 px-4">
+              <Tabs.Trigger 
+                value="chat" 
+                className="px-4 py-2 text-gray-400 hover:text-white data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-blue-500"
+              >
+                Chat
+              </Tabs.Trigger>
+              <Tabs.Trigger 
+                value="models" 
+                className="px-4 py-2 text-gray-400 hover:text-white data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-blue-500"
+              >
+                Models
+              </Tabs.Trigger>
+              <Tabs.Trigger 
+                value="help" 
+                className="px-4 py-2 text-gray-400 hover:text-white data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-blue-500"
+              >
+                Help
+              </Tabs.Trigger>
+            </Tabs.List>
 
-            <TabsContent value="models" className="flex-1 p-4 overflow-auto">
+            <Tabs.Content value="chat" className="flex-1 overflow-hidden">
+              <ChatInterface onOpenSettings={() => setShowSettings(true)} />
+            </Tabs.Content>
+
+            <Tabs.Content value="models" className="flex-1 overflow-auto p-4">
               <ModelManager />
-            </TabsContent>
+            </Tabs.Content>
 
-            <TabsContent value="api" className="flex-1 p-4 overflow-auto">
-              <APIEndpoints />
-            </TabsContent>
-          </Tabs>
+            <Tabs.Content value="help" className="flex-1 overflow-auto p-4">
+              <HelpContent />
+            </Tabs.Content>
+          </Tabs.Root>
         </div>
 
-        <ResourceMonitor />
+        <div className="w-64 border-l border-gray-800 overflow-y-auto">
+          <ResourceMonitor />
+        </div>
       </div>
     </div>
   );
