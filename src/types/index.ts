@@ -29,6 +29,7 @@ export interface Window {
 export interface User {
   id: string;
   email: string;
+  activeSubscription?: boolean;
 }
 
 export interface AuthState {

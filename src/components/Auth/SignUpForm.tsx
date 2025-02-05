@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useNavigate } from 'react-router-dom';
 
 export const SignUpForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const signUp = useAuthStore((state) => state.signUp);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await signUp(email, password);
+      navigate('/subscribe', {replace: true});
+      
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     }

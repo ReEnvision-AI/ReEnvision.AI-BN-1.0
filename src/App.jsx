@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Desktop } from './components/Desktop/Desktop';
 import { AuthPage } from './components/Auth/AuthPage';
+import { CheckoutPage } from './components/Auth/CheckoutPage';
 import { useAuthStore } from './store/useAuthStore';
-//import { supabase } from './lib/supabase';
 import supabase from './services/supabaseService';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { ReturnPage } from './components/Return';
 
 function App() {
   const { user, setUser, loading, setLoading } = useAuthStore();
@@ -79,7 +82,20 @@ function App() {
     );
   }
 
-  return user ? <Desktop /> : <AuthPage />;
+  //return user ? <Desktop /> : <AuthPage />;
+
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<ProtectedRoute><Desktop/></ProtectedRoute>} />
+        <Route path="/login" element={<AuthPage login={true}/>} />
+        <Route path="/signup" element={<AuthPage login={false}/>} />
+        <Route path="/return" element={<ReturnPage/>} />
+        <Route path="/subscribe" element={user ? <CheckoutPage user={user}/> :<AuthPage login={false}/>} />
+        <Route path="/desktop" element={<ProtectedRoute><Desktop/></ProtectedRoute>} />
+      </Routes>
+    </Router>
+  )
 }
 
 export default App;

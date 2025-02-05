@@ -31,7 +31,7 @@ Deno.serve(async (request: Request) => {
       status: 200,
     });
   }
-  if (request.method !== 'GET') {
+  if (request.method !== 'POST') {
     return new Response('Method not allowed', {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 405,
@@ -40,19 +40,20 @@ Deno.serve(async (request: Request) => {
 
   try {
 
-    //TODO: REPLACE WITH ACTUAL PRODUCT ID
-    const product_id = "prod_RgsOOFG1xbT5Zd";
+    const {email} = await request.json();
 
     const session = await stripe.checkout.sessions.create({
       ui_mode: 'embedded',
       line_items: [
         {
+          //TODO: REPLACE WITH ACTUAL PRICE ID
           price: "price_1QnUdJB2qnYuPGRFFyqvB50r",
           quantity: 1,
         },
       ],
+      customer_email: email,
       mode: 'subscription',
-      return_url: `${DOMAIN}`,
+      return_url: `${DOMAIN}/return?session_id={CHECKOUT_SESSION_ID}`,
     })
 
     if (!session){

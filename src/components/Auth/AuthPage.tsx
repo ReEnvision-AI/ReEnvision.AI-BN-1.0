@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 import { LoginForm } from './LoginForm';
 import { SignUpForm } from './SignUpForm';
 
-export const AuthPage: React.FC = () => {
-  const [isLogin, setIsLogin] = useState(true);
+interface AuthPageProps {
+  login?: boolean;
+}
+
+export const AuthPage: React.FC<AuthPageProps> = ({login = true}: AuthPageProps) => {
+  const [isLogin, setIsLogin] = useState(login);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 flex items-center justify-center p-4">
