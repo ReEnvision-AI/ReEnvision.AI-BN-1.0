@@ -42,7 +42,6 @@ const allowedEvents: Stripe.Event.Type[] = [
 
 async function processEvent(event: Stripe.Event) {
   // Handle the event
-  console.log('Processing event:', event.id);
   if (!allowedEvents.includes(event.type)) return;
 
   const { customer: customerId } = event?.data?.object as {
@@ -65,8 +64,6 @@ async function syncStripeDataToKV(customerId: string) {
     status: 'all',
     expand: ['data.default_payment_method'],
   });
-
-  console.log('Subscriptions:', subscriptions.data);
 
   if (subscriptions.data.length === 0) {
     const subData = { status: 'none' };
@@ -93,7 +90,6 @@ async function syncStripeDataToKV(customerId: string) {
   };
 
   // await supabase.storage.from('stripe_subscriptions').upsert([{ id: customerId, data: subData }]);
-  console.log('Synced subscription data:', subData);
   return subData;
 }
 
@@ -103,8 +99,6 @@ Deno.serve(async (req) => {
   if (!signature) {
     return new Response('{}', { status: 400 });
   }
-  console.log('Stripe-Signature:', signature);
-
   const body = await req.text();
 
   async function doEventProcessing() {
