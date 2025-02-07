@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
-import { useAuthStore } from '../../store/useAuthStore';
+//import { useAuthStore } from '../../store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../../context/AuthContext';
 
 export const SignUpForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const signUp = useAuthStore((state) => state.signUp);
+  //const signUp = useAuthStore((state) => state.signUp);
+  const {signUp} = useAuthContext();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      console.log("About to sign up...")
       await signUp(email, password);
+      console.log("Signed up");
       navigate('/subscribe', {replace: true});
       
     } catch (err) {

@@ -1,19 +1,24 @@
 import React, { useState } from 'react';
-import { useAuthStore } from '../../store/useAuthStore';
+//import { useAuthStore } from '../../store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../../context/AuthContext';
 
 export const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const signIn = useAuthStore((state) => state.signIn);
+  //const signIn = useAuthStore((state) => state.signIn);
 
   const navigate = useNavigate();
+
+  const {signIn} = useAuthContext();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await signIn(email, password);
+
+      // Get the active subscription
       navigate('/desktop');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');

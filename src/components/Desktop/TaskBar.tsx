@@ -1,14 +1,17 @@
 import React from 'react';
 import { useStore } from '../../store/useWindowStore';
-import supabase from '../../services/supabaseService';
+//import supabase from '../../services/supabaseService';
 import { Menu, Power } from 'lucide-react';
 import { TaskbarItem } from './TaskBarItem';
+import { useAuthContext } from '../../context/AuthContext';
 
 export const Taskbar: React.FC = () => {
   const { windows } = useStore();
+  const { signOut } = useAuthContext();
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    //await supabase.auth.signOut();
+    await signOut();
   };
 
   return (

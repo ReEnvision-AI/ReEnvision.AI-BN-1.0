@@ -28,6 +28,8 @@ Deno.serve(async (req) => {
     stripeApiKey: Deno.env.get('STRIPE_API_KEY'),
     stripeWebhookSecret: Deno.env.get('STRIPE_WEBHOOK_SECRET'),
     allowedStripeEvents: new Set([
+      'customer.created',
+      'customer.updated',
       'checkout.session.completed',
       'product.created',
       'product.updated',
@@ -157,6 +159,24 @@ Deno.serve(async (req) => {
     console.log(`Price deleted: ${price.id}`);
   }
 
+  async function manageCustomerChange(customer: Stripe.Customer) {
+    const email = customer.email;
+    if (!email || email === '') {
+      console.error(`Customer created without an email.`);
+      throw new Error(`Customer created without an email.`);
+    }
+
+    const { error: customerError } = await supabase
+      .from(config.dbTableNames.profiles)
+      .update({ stripe_customer_id: customer.id })
+      .eq('email', email);
+    if (customerError) {
+      console.error(`Updating profile failed for email [${email}]:`, customerError.message);
+      throw new Error(`Updating profile failed for email [${email}]:`, customerError.message);
+    }
+    console.log(`Customer updated`);
+  }
+
   async function manageSubscriptionStatusChange(
     subscriptionId: string,
     customerId: string,
@@ -165,21 +185,64 @@ Deno.serve(async (req) => {
     console.log(
       `ManageSubscriptionStatusChange start for subscription [${subscriptionId}], customer [${customerId}], event type [${event_type}]`,
     );
-    const { data: customerData, error: noCustomerError } = await supabase
+
+    let customerData: { id: string } | null = null;
+    let uuid: string;
+
+    // First Attempt: Find customer by stripe_customer_id
+    const { data: customerDataResult, error: noCustomerError } = await supabase
       .from(config.dbTableNames.profiles)
       .select('id')
       .eq('stripe_customer_id', customerId)
       .single();
 
-    if (noCustomerError) {
-      console.error(
-        `Customer lookup failed for customer ID [${customerId}] during subscription status change for subscription [${subscriptionId}]:`,
-        noCustomerError.message,
+    if (!noCustomerError && customerDataResult) {
+      customerData = customerDataResult;
+      uuid = customerData.id;
+    } else {
+      // Second Attempt: Fetch customer from Stripe and try to find by email.
+      console.warn(
+        `Customer not found locally with stripe_customer_id [${customerId}].  Attempting Stripe customer retrieval.  Subscription ID: [${subscriptionId}]`,
       );
-      throw new Error(`Customer lookup failed: ${noCustomerError.message}`); // Re-throw for outer error handling
-    }
+      let stripeCustomer: Stripe.Customer;
+      try {
+        stripeCustomer = (await stripe.customers.retrieve(customerId)) as Stripe.Customer;
+        if (stripeCustomer.deleted) {
+          throw new Error(`Stripe customer ${customerId} is marked as deleted.`);
+        }
+      } catch (stripeError: any) {
+        console.error(
+          `Stripe customer retrieve API error for customer ID [${customerId}] during subscription status change for subscription [${subscriptionId}]:`,
+          stripeError.message,
+          stripeError,
+        );
+        throw new Error(`Stripe customer retrieve failed: ${stripeError.message}`);
+      }
 
-    const { id: uuid } = customerData!;
+      if (!stripeCustomer.email) {
+        console.error(`Stripe customer [${customerId}] has no email address.  Cannot lookup in database.`);
+        throw new Error(`Stripe customer has no email address`);
+      }
+
+      // Find Customer By Email
+      const { data: customerEmailData, error: noCustomerEmailError } = await supabase
+        .from(config.dbTableNames.profiles)
+        .select('id')
+        .eq('email', stripeCustomer.email)
+        .single();
+
+      if (noCustomerEmailError || !customerEmailData) {
+        console.error(
+          `Customer lookup failed by email [${stripeCustomer.email}] for customer ID [${customerId}] during subscription status change for subscription [${subscriptionId}]:`,
+          noCustomerEmailError?.message,
+        );
+        throw new Error(
+          `Customer lookup failed by email [${stripeCustomer.email}]: ${noCustomerEmailError?.message ?? 'Customer not found'}`,
+        );
+      }
+      customerData = customerEmailData;
+      uuid = customerData.id;
+    }
 
     let subscription: Stripe.Subscription;
     try {
@@ -228,8 +291,7 @@ Deno.serve(async (req) => {
   async function processEvent(event: Stripe.Event) {
     // --- Check if event type is allowed ---
     if (!config.allowedStripeEvents.has(event.type)) {
-      console.warn('Received Stripe event of unhandled type:', event.type, event.id);
-      return new Response(`Unhandled event type: ${event.type}`, { status: 400 }); // Or just return 200 to acknowledge?
+      return new Response(JSON.stringify({ recieved: true }), { status: 200 });
     }
 
     try {
@@ -269,6 +331,12 @@ Deno.serve(async (req) => {
               event.type, // Pass event type for logging context
             );
           }
+          break;
+        }
+        case 'customer.created':
+        case 'customer.updated': {
+          const customer = event.data.object as Stripe.Customer;
+          await manageCustomerChange(customer);
           break;
         }
 

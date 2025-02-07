@@ -1,9 +1,16 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode} from "react";
 import { useAuthStore } from "../store/useAuthStore";
+import { User } from "../types";
 
 interface AuthContextInterface {
     isAuthenticated: boolean;
-    hasActiveSubscription: boolean;
+    //updateActiveSubscription: () => void;
+    hasActiveSubscription: () => boolean;
+    signIn: (email: string, password: string) => Promise<void>;
+    signUp: (email: string, password: string) => Promise<void>;
+    signOut: () => Promise<void>;
+    setUser: (user: User | null) => void;
+    user: User | null
 }
 
 const AuthContext = createContext<AuthContextInterface | undefined>(undefined);
@@ -18,26 +25,32 @@ export const useAuthContext = () => {
 
 export const AuthProvider = ({ children }: {children: ReactNode}) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
-    const user = useAuthStore((state) => state.user);
+    const [subscribed, setSubscribed] = useState(false);
+    //const user = useAuthStore((state) => state.user);
+    const {user, signIn, signOut, signUp, setUser} = useAuthStore();
 
     useEffect(() => {
         if (user) {
             setIsAuthenticated(true);
             if(user.activeSubscription) {
-                setHasActiveSubscription(true);
+                setSubscribed(true);
             } else {
-                setHasActiveSubscription(false);
+                setSubscribed(false);
             }
         } else {
             setIsAuthenticated(false);
-            setHasActiveSubscription(false);
+            setSubscribed(false);
         }
     }, [user]);
 
     const value = {
         isAuthenticated,
-        hasActiveSubscription,
+        hasActiveSubscription: () => {return subscribed},
+        signIn,
+        signUp,
+        signOut,
+        user,
+        setUser,
     };
 
     return (

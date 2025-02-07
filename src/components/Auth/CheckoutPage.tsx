@@ -1,96 +1,76 @@
-import React, { useState, useEffect } from 'react';
+import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { EmbeddedCheckoutProvider, EmbeddedCheckout } from '@stripe/react-stripe-js';
-import { useAuthStore } from '../../store/useAuthStore';
+import React, { useEffect, useRef, useState } from 'react'; // Import useRef
+import { useAuthContext } from '../../context/AuthContext';
 import supabase from '../../services/supabaseService';
-import { User } from '../../types';
 
-const stripePromise = loadStripe(
-  'pk_test_51QmkL0B2qnYuPGRFm72zkfIFa9yX4FrDwBmkuF5lkuC6CADspq8FQexDFhhFcgjDGAheY7hlkPCghvHC5Sc3WbB900Pc6Mm8cT',
-);
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_API_KEY);
 
-
-
-
-const fetchStripeUser = async () => {
-  const { data, error } = await supabase.functions.invoke('create-payment-customer', {method: "GET"});
-  if(!data || error) {
-    console.error(error);
-    return '';
-  }
-  return data.customerId;
+interface CheckoutSessionResponse {
+  clientSecret: string;
+  // Add other properties if your Supabase function returns them
 }
 
-//const stripeUser = fetchStripeUser().then();
-
-interface CheckoutPageProps {
-    user: User
-}
-
-export const CheckoutPage: React.FC<CheckoutPageProps> = ({user}) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export const CheckoutPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
-  const [stripeSecret, setStripeSecret] = useState<string | null>(null);
-  const [stripeUser, setStripeUser] = useState<string>('');
-  const signUp = useAuthStore((state) => state.signUp);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const { user } = useAuthContext();
+  const hasFetchedSecret = useRef(false); // Use useRef to track if secret has been fetched
 
-  useEffect(()=> {
-    const fetchStripeSecret = async () : Promise<void> => {
-        const { data, error } = await supabase.functions.invoke('create-checkout-session', {method: "POST", body: {email: user.email}});
+  useEffect(() => {
+    // Reset state when user changes (login/logout)
+    setClientSecret(null);
+    setError(null);
+    hasFetchedSecret.current = false; // Reset the flag
+    setLoading(false);
+
+    if (!user) {
+      return; // No user, no need to fetch
+    }
+
+    // Only fetch if we haven't already fetched for this user
+    if (!hasFetchedSecret.current) {
+      setLoading(true);
+      fetchStripeSecret();
+    }
+
+    async function fetchStripeSecret() {
+      try {
+        const { data, error } = await supabase.functions.invoke<CheckoutSessionResponse>('create-checkout-session', {
+          method: 'POST',
+        });
         if (!data || error) {
           console.error(error);
+          setError(error?.message || 'An unknown error occurred');
+          return;
         }
-      
-        //return data.clientSecret;
-        //console.log('Setting stripe secret to:', data.clientSecret);
-        setStripeSecret(data.clientSecret);
-        //setStripeUser(data.customerId);
-      };
 
-      fetchStripeSecret().then();
-    }, [user])
-
-  /*useEffect(() => {
-    const fetchStripeUser = async () => {
-      const { data, error } = await supabase.functions.invoke('create-stripe-customer', {method: "GET"});
-      if(!data || error) {
-        console.error(error);
-        return;
+        console.log('Setting stripe secret to:', data.clientSecret);
+        setClientSecret(data.clientSecret);
+        hasFetchedSecret.current = true; // Mark as fetched
+      } catch (err: any) {
+        console.error('Unexpected error:', err);
+        setError(err.message || 'An unexpected error occurred');
+      } finally {
+        setLoading(false);
       }
-
-      setStripeUser(data.customerId);
-    };
-
-    fetchStripeUser().then();
-  }, []);*/
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await signUp(email, password);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
     }
-  };
-
-  const handleComplete = () => {
-    console.log('Checkout has completed!');
-  };
-
-  //const options = { fetchClientSecret: fetchStripeSecret, onComplete: handleComplete };
+  }, [user]); // Only depend on user
 
   return (
     <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Create Account</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Checkout</h2>
       {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>}
       <div id="checkout">
-          <EmbeddedCheckoutProvider stripe={stripePromise} options={{ clientSecret: stripeSecret, onComplete: handleComplete }}>
-            <EmbeddedCheckout/>
-            
+        {!loading && clientSecret ? (
+          <EmbeddedCheckoutProvider stripe={stripePromise} options={{ clientSecret }}>
+            <EmbeddedCheckout />
           </EmbeddedCheckoutProvider>
-        </div>
+        ) : (
+          <span>Loading...</span>
+        )}
+      </div>
     </div>
   );
 };
-

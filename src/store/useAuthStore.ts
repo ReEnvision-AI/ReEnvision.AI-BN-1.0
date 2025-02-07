@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-//import { supabase } from '../lib/supabase';
 import supabase from '../services/supabaseService';
 import type { AuthState, User } from '../types';
 
@@ -20,19 +19,29 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   setLoading: (loading) => set({ loading }),
 
   signIn: async (email, password) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data: userData, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+
+    //query to see if the user has an active subscription
     if (error) throw error;
+
+    set({user: {id: userData.user.id, email: userData.user.email}})
   },
 
   signUp: async (email, password) => {
-    const { error } = await supabase.auth.signUp({
+    const { data: signUpData, error } = await supabase.auth.signUp({
       email,
       password,
     });
     if (error) throw error;
+
+    if (signUpData.user) {
+      set({user: {id: signUpData.user.id, email: signUpData.user.email}});
+    }
+
+  
   },
 
   signOut: async () => {

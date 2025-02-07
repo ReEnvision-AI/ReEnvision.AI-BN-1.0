@@ -28,7 +28,7 @@ export interface Window {
 
 export interface User {
   id: string;
-  email: string;
+  email?: string | undefined;
   activeSubscription?: boolean;
 }
 
