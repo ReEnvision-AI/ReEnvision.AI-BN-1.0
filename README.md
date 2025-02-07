@@ -216,7 +216,7 @@ To stop the development environment, follow these steps in order:
 <li><strong>Development Server:</strong> In the terminal running <code>pnpm dev</code>, press <code>Ctrl-C</code> or type <code>q</code> and press Enter.</li>
 <li><strong>Stripe Webhook Forwarding:</strong> In the terminal running <code>stripe listen</code>, press <code>Ctrl-C</code>.</li>
 <li><strong>Supabase Edge Functions:</strong> In the terminal running <code>supabase functions serve</code>, press <code>Ctrl-C</code>.</li>
-<li><strong>Supabase:<strong> In a terminal, navigate to the project's root directory and run:
+<li><strong>Supabase:</strong> In a terminal, navigate to the project's root directory and run:
 
 ```bash
 supabase stop
