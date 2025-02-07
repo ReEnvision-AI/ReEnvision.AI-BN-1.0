@@ -11,5 +11,10 @@
   "debug.javascript.autoAttachFilter": "smart",
   "cSpell.allowCompoundWords": true,
   // Project dictionary
-  "cSpell.words": ["supabase", "zustand", "Deno"]
+  "cSpell.words": ["supabase", "zustand", "Deno"],
+
+  // Deno settings
+  "deno.enable": true,
+  "deno.enablePaths": ["./supabase/functions"],
+  "deno.importMap": "./supabase/functions/import-map.json"
 }

@@ -1,7 +1,7 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
-import { createClient } from 'jsr:@supabase/supabase-js@2';
 import Stripe from 'stripe';
+import { createClient } from 'supabase';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -59,28 +59,6 @@ Deno.serve(async (request: Request) => {
     },
   });
 
-  // --- Helper Function: updateSupabaseCustomerWithStripeId --- (Now used after session creation)
-  async function updateSupabaseCustomerWithStripeId(uuid: string, stripeCustomerId: string | null | undefined) {
-    try {
-      const { error: updateError } = await adminSupabase
-        .from('profiles')
-        .update({ stripe_customer_id: stripeCustomerId })
-        .eq('id', uuid);
-
-      if (updateError) {
-        console.error('Error in updateSupabaseCustomerWithStripeId (Supabase update failed):', updateError, {
-          uuid,
-          stripeCustomerId,
-        });
-        throw new Error(`Supabase customer update error: ${updateError.message}`);
-      }
-      return stripeCustomerId; // Return the ID even after update.
-    } catch (error: any) {
-      console.error('Unexpected error in updateSupabaseCustomerWithStripeId:', error, { uuid, stripeCustomerId });
-      throw error;
-    }
-  }
-
   try {
     // --- Handle request method validation --- (No changes here)
     if (request.method === 'OPTIONS') {
@@ -108,7 +86,7 @@ Deno.serve(async (request: Request) => {
         return createErrorResponse('Invalid or expired token', 401);
       }
       user = authResult.data.user;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error during admin_supabase.auth.getUser:', error, { token });
       return createErrorResponse('Error verifying token', 400);
     }
@@ -140,33 +118,16 @@ Deno.serve(async (request: Request) => {
         console.error(message, { priceId: priceIdToUse, userData });
         return createErrorResponse(message, 500);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error creating Stripe Checkout Session:', error, { userData });
       return createErrorResponse('Failed to create Stripe Checkout Session', 500);
     }
-
-    // --- Update Supabase with Stripe Customer ID (from the session) --- (Crucial Change)
-    //let stripeCustomerId: string | null | undefined = null; // Explicitly type as string | null | undefined
-    //if (session && session.customer) {
-    // Type assertion:  We know session.customer will be a string (or expanded object) here, not a number.
-    //  stripeCustomerId = typeof session.customer === 'string' ? session.customer : session.customer.id;
-    //  console.log('Customer ID created', stripeCustomerId);
-    //} else {
-    //  console.log('No customer id was created by stripe checkout session');
-    //}
-
-    //try {
-    //  await updateSupabaseCustomerWithStripeId(userData.uuid, stripeCustomerId); // Pass the customer ID (or null)
-    //} catch (updateError: any) {
-    // Even if updating Supabase fails, we still return the clientSecret.  The frontend can proceed with the checkout.
-    //  console.error('Failed to update Supabase with Stripe customer ID:', updateError);
-    //}
 
     return new Response(JSON.stringify({ clientSecret: session.client_secret }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     });
-  } catch (unhandledError: any) {
+  } catch (unhandledError: unknown) {
     console.error('Unhandled error in Deno.serve handler:', unhandledError);
     return createErrorResponse('Unhandled server error', 500);
   }

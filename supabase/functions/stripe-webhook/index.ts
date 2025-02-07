@@ -4,9 +4,9 @@
 
 // Setup type definitions for built-in Supabase Runtime APIs
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
-import { createClient } from 'jsr:@supabase/supabase-js@2';
 import Stripe from 'stripe';
-import type { Tables, TablesInsert } from './types_db';
+import { createClient } from 'supabase';
+import type { Tables, TablesInsert } from './types_db.ts';
 
 const toDateTime = (secs: number) => {
   const t = new Date(+0); // Unix epoch start.
@@ -172,7 +172,7 @@ Deno.serve(async (req) => {
       .eq('email', email);
     if (customerError) {
       console.error(`Updating profile failed for email [${email}]:`, customerError.message);
-      throw new Error(`Updating profile failed for email [${email}]:`, customerError.message);
+      throw new Error(`Updating profile failed for email [${email}]:`, customerError);
     }
     console.log(`Customer updated`);
   }
@@ -210,13 +210,19 @@ Deno.serve(async (req) => {
         if (stripeCustomer.deleted) {
           throw new Error(`Stripe customer ${customerId} is marked as deleted.`);
         }
-      } catch (stripeError: any) {
+      } catch (stripeError: unknown) {
+        let errorMessage = 'An unexpected error occurred';
+        if (stripeError instanceof Error) {
+          errorMessage = stripeError.message;
+        } else if (typeof stripeError === 'string') {
+          errorMessage = stripeError;
+        }
         console.error(
           `Stripe customer retrieve API error for customer ID [${customerId}] during subscription status change for subscription [${subscriptionId}]:`,
-          stripeError.message,
+          errorMessage,
           stripeError,
         );
-        throw new Error(`Stripe customer retrieve failed: ${stripeError.message}`);
+        throw new Error(`Stripe customer retrieve failed: ${errorMessage}`);
       }
 
       if (!stripeCustomer.email) {
@@ -249,13 +255,19 @@ Deno.serve(async (req) => {
       subscription = await stripe.subscriptions.retrieve(subscriptionId, {
         expand: ['default_payment_method'],
       });
-    } catch (stripeError: any) {
+    } catch (stripeError: unknown) {
+      let errorMessage = 'An unknown error occurred.';
+      if (stripeError instanceof Error) {
+        errorMessage = stripeError.message;
+      } else if (typeof stripeError === 'string') {
+        errorMessage = stripeError;
+      }
       console.error(
         `Stripe subscription retrieve API error for subscription ID [${subscriptionId}], customer [${customerId}]:`,
-        stripeError.message,
+        errorMessage,
         stripeError,
       );
-      throw new Error(`Stripe subscription retrieve failed: ${stripeError.message}`); // Re-throw
+      throw new Error(`Stripe subscription retrieve failed: ${errorMessage}`); // Re-throw
     }
 
     // Upsert the latest status of the subscription object
@@ -345,8 +357,14 @@ Deno.serve(async (req) => {
           console.warn('Unexpected event type reached in processEvent switch:', event.type, event.id);
           return new Response(`Unexpected event type: ${event.type}`, { status: 400 }); // Or just 200?
       }
-    } catch (error: any) {
-      console.error('Error processing Stripe event:', event.type, event.id, error);
+    } catch (error: unknown) {
+      let errorMessage = 'An unknown error occurred.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+      console.error('Error processing Stripe event:', event.type, event.id, errorMessage);
       return new Response('Webhook event processing failed.', { status: 500 }); // Generic 500 for event processing failures
       // Consider more specific error responses based on the type of error if feasible.
     }
@@ -372,9 +390,15 @@ Deno.serve(async (req) => {
       config.stripeWebhookSecret,
       undefined, // optional timestamp tolerance
     );
-  } catch (err: any) {
-    console.error(`Stripe webhook signature verification failed: ${err.message}`, err); // Include error details in log
-    return new Response(`Webhook signature verification failed: ${err.message}`, {
+  } catch (err: unknown) {
+    let errorMessage = 'An unknown error occurred.';
+    if (err instanceof Error) {
+      errorMessage = err.message;
+    } else if (typeof err === 'string') {
+      errorMessage = err;
+    }
+    console.error(`Stripe webhook signature verification failed: ${errorMessage}`, err); // Include error details in log
+    return new Response(`Webhook signature verification failed: ${errorMessage}`, {
       status: 400, // 400 for signature failures
     });
   }
@@ -384,7 +408,7 @@ Deno.serve(async (req) => {
     await processEvent(event);
     EdgeRuntime.waitUntil(Promise.resolve()); // Keep function alive until event processing finishes
     return new Response(JSON.stringify({ received: true }), { status: 200 }); // 200 OK for successful processing
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Webhook event processing error:', event.type, event.id, error); // Log event details on processing error
     return new Response('Webhook event processing failed.', { status: 500 }); // 500 for processing errors
   }

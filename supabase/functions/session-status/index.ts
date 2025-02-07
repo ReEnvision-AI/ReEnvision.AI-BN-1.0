@@ -1,8 +1,3 @@
-// Follow this setup guide to integrate the Deno language server with your editor:
-// https://deno.land/manual/getting_started/setup_your_environment
-// This enables autocomplete, go to definition, etc.
-
-// Setup type definitions for built-in Supabase Runtime APIs
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
 import Stripe from 'stripe';
@@ -17,7 +12,7 @@ const stripe = new Stripe(STRIPE_SECRET_KEY, {
   httpClient: Stripe.createFetchHttpClient(),
 });
 
-Deno.serve(async (req) => {
+Deno.serve(async (req: Request) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response('', {
@@ -54,4 +49,9 @@ Deno.serve(async (req) => {
       status: 405,
     });
   }
+
+  return new Response('There was an unknown error', {
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    status: 500,
+  });
 });
