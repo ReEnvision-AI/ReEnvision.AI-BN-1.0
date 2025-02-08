@@ -1,11 +1,8 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
 import Stripe from 'stripe';
+import { corsHeaders, createErrorResponse } from '../shared/common.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
 const STRIPE_SECRET_KEY = Deno.env.get('STRIPE_API_KEY')! as string;
 
 const stripe = new Stripe(STRIPE_SECRET_KEY, {
@@ -21,10 +18,7 @@ Deno.serve(async (req: Request) => {
     });
   }
   if (req.method !== 'POST') {
-    return new Response('Method not allowed', {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 405,
-    });
+    return createErrorResponse('Method not allowed', 405);
   }
   try {
     const { session_id } = await req.json();
@@ -37,21 +31,12 @@ Deno.serve(async (req: Request) => {
         });
       }
     } else {
-      return new Response('No active session', {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
-      });
+      return createErrorResponse('No active session', 400);
     }
   } catch (error) {
     console.error(error);
-    return new Response('There was an issue', {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 405,
-    });
+    return createErrorResponse('Internal Server Issue', 405);
   }
 
-  return new Response('There was an unknown error', {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    status: 500,
-  });
+  return createErrorResponse('There was an unknown error', 500);
 });

@@ -2,18 +2,7 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import Stripe from 'stripe';
 import { createClient } from 'supabase';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-function createErrorResponse(message: string, status: number) {
-  return new Response(JSON.stringify({ error: message }), {
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    status,
-  });
-}
+import { corsHeaders, createErrorResponse } from '../shared/common.ts';
 
 Deno.serve(async (request: Request) => {
   const config = {
