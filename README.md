@@ -4,23 +4,62 @@ This document provides instructions for setting up and running the ReEnvision.AI
 
 ## Table of Contents
 
-- [Prerequisites](#prerequisites)
-- [Getting Started](#getting-started)
-  - [1. Clone the Repository](#1-clone-the-repository)
-  - [2. Pull Database Changes](#2-pull-database-changes)
-  - [3. Install Dependencies](#3-install-dependencies)
-  - [4. Start Supabase Locally](#4-start-supabase-locally)
-  - [5. Forward Stripe Events to Local Webhook](#5-forward-stripe-events-to-local-webhook)
-  - [6. Set Environment Variables](#6-set-environment-variables)
-    - [Vite Environment File (.env.development.local)](#vite-environment-file-envdevelopmentlocal)
-    - [Supabase Edge Functions Environment File (.env)](#supabase-edge-functions-environment-file-env)
-  - [7. Start Supabase Edge Functions](#7-start-supabase-edge-functions)
-  - [8. Start the Development Server](#8-start-the-development-server)
+- [Quick Start for Most Developers](#quickstart)
+- [Full Setup for Database Changes](#fullseutp)
 - [Shutting Down](#shutting-down)
 - [Troubleshooting](#troubleshooting)
 - [Important Notes and Reminders](#important-notes-and-reminders)
 
-## Prerequisites
+## Quick Start
+This simplified setup uses the stage Supabase database and a Stripe test API key. You do <em>not</em> need to run SUpabase locally nor do you need to forward Stripe events.
+<ol>
+<li><strong>Clone the Repository</strong>
+<br>Open a terminal and run the following commands to clone the project repository and navigate into the project directory:
+
+```bash
+git clone git@github.com:ReEnvision-AI/ReEnvision.AI-BN-1.0.git
+cd ReEnvision.AI-BN-1.0
+```
+</li>
+
+<li><strong>Install Dependencies</strong>
+
+Install the project's Node.js dependencies using `pnpm`:<br>
+```bash
+pnpm install
+```
+</li>
+
+<li><strong>Set Environment Variables</strong>
+
+Environment variables are used to configure the application without hardcoding sensitive information (like API keys) directly into the code.
+  - **Create the file**: In the project's root directory, copy the `.env.` example file to a new file named `.env.development.local`:
+
+    ```bash
+    cp .env.example .env.development.local
+    ```
+
+    - **Edit** `.env.development.local`: Open the `.env.development.local` file and set the following variables. Contact the ReEnvision team to obtain the values for these keys:
+      - `VITE_SUPA_URL`: The URL for the supabase staging environment
+      - `VITE_SUPA_PUBLIC_KEY`: The public key for the supabase staging environment.
+      - `VITE_STRIPE_API_KEY`: The public key for the Stripe sandbox environment.
+
+</li>
+
+<li><strong>Start the Development Server:</strong>
+
+```bash
+pnpm dev
+```
+
+This command builds the application and starts a local development server, usually on port 8000. The terminal output will show the exact URL (e.g., `http://localhost:8000`). Open your web browser and navigate to this URl to run the application.
+</li>
+</ol>
+
+## Full Setup
+These instructions are only necessary if you are making changes to the database schema. If you are unsure whether you need this setup, please contact the ReEnvision team.
+
+### Prerequisites
 
 Before you begin, ensure you have the following software installed and configured:
 
@@ -34,11 +73,11 @@ Before you begin, ensure you have the following software installed and configure
     (If you prefer to use `npm` or `yarn`, you _can_, but you'll need to adapt the commands accordingly. Consider adding instructions for those package managers if you want to support them.)
 5.  **Git**: To clone this repo, be sure to have git installed on your machine. Install the proper version for your operating system [here](https://git-scm.com/downloads)
 
-## Getting Started
+### Getting Started
 
 Follow these steps to get the project running on your local machine:
 
-### 1. Clone the Repository
+#### 1. Clone the Repository
 
 Open a terminal and run the following commands to clone the project repository and navigate into the project directory:
 
@@ -47,7 +86,7 @@ git clone git@github.com:ReEnvision-AI/ReEnvision.AI-BN-1.0.git
 cd ReEnvision.AI-BN-1.0
 ```
 
-### 2. Pull Database Changes
+#### 2. Pull Database Changes
 
 Pull the latest database schema from Supabase
 
@@ -57,7 +96,7 @@ supabase db pull
 
 This command fetches the latest schema changes and creates migrations so that your local database matches the expected structure.
 
-### 3. Install Dependencies
+#### 3. Install Dependencies
 
 Install the project's Node.js dependencies using `pnpm`:
 
@@ -65,7 +104,7 @@ Install the project's Node.js dependencies using `pnpm`:
 pnpm install
 ```
 
-### 4. Start Supabase locally
+#### 4. Start Supabase locally
 
 Stat the local Supabase instance using Docker:
 
@@ -102,7 +141,7 @@ service_role key: some-really-long-service-role-key
 
 The Supabase Studio URL is also important. You can access the local Supabase Studio (a web-based database management tool) at the `Studio URL` (e.g., `http://127.0.0.1:54323`). This is very helpful for inspecting your database.
 
-### 5. Forward Stripe Events to Local Webhook
+#### 5. Forward Stripe Events to Local Webhook
 
 Open a new terminal window (keep the Supabase terminal running). You'll use this terminal to run the Stripe CLI.
 
@@ -133,7 +172,7 @@ Your webhook signing secret is whsec_7......
 
 **Copy this** `whsec_...` value. You'll need it for the `STRIPE_WEBHOOK_SECRET` environment variable.
 
-### 6. Set Environment Variables
+#### 6. Set Environment Variables
 
 Environment variables are used to configure the application without hardcoding sensitive information (like API keys) directly into the code.
 
@@ -141,7 +180,7 @@ Environment variables are used to configure the application without hardcoding s
 
 <ol>
 
-<li><p>**Create the file:** In the project's root directory, copy the <code>.env.example</code> file to a new file names <code>.env.development.local</code>:</p>
+<li><strong>Create the file:</strong> In the project's root directory, copy the <code>.env.example</code> file to a new file names <code>.env.development.local</code>:
 
 ```bash
 cp .env.example .env.development.local
@@ -182,7 +221,7 @@ Files starting with <code>.env.local</code> are automatically loaded by Vite in 
 </ul>
 </ol>
 
-### 7. Start Supabase Edge Functions
+#### 7. Start Supabase Edge Functions
 
 Open another **new terminal window** (keep the Supabase and Stripe CLI terminals running). Navigate to the project's root directory.
 
