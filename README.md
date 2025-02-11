@@ -277,6 +277,6 @@ This stops all the Supabase docker containers.
 ## Important Notes and Reminders
 
 - **Test Keys Only: Never** use your live Stripe API keys in a development environment. Always use test keys.
-- **Data Loss:** Running ``supabase stop --no-backup` will reset your local database. Be careful when using this command.
+- **Data Loss:** Running `supabase stop --no-backup` will reset your local database. Be careful when using this command.
 - **Supabase Studio:** Use the Supabase Studio (at the `Studio URL` provided by `supabase start`) to inspect your database, manage users, and explore the Supabase features.
 - **Keep Terminals Open:** You'll need multiple terminal windows open simultaneously: one for Supabase, one for the Stripe CLI, one for the Supabase edge functions, and one for the development server.
