@@ -1,6 +1,6 @@
 {
   "imports": {
-    "stripe": "npm:stripe@^11.16",
+    "stripe": "npm:stripe@^17.4.0",
     "supabase": "https://esm.sh/@supabase/supabase-js@2.48.1",
     "deno": "https://deno.land/std@0.168.0/http/server.ts"
   }
