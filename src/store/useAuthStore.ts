@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import supabase from '../services/supabaseService';
+import supabase, { isSessionValid } from '../services/supabaseService';
 import type { AuthState, User } from '../types';
 
 interface AuthStore extends AuthState {
@@ -24,7 +24,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       password,
     });
 
-    //query to see if the user has an active subscription
+    // Query to see if the user has an active subscription
     if (error) throw error;
 
     set({user: {id: userData.user.id, email: userData.user.email}})
@@ -40,14 +40,22 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     if (signUpData.user) {
       set({user: {id: signUpData.user.id, email: signUpData.user.email}});
     }
-
-  
   },
 
   signOut: async () => {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
     set({ user: null });
+  },
+  
+  init: async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user && isSessionValid()) {
+      set({
+        user: { id: session.user.id, email: session.user.email },
+        loading: false
+      });
+    }
   },
 
   getUser: () => get().user,

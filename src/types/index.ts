@@ -26,6 +26,10 @@ export interface Window {
   size: { width: number | string; height: number | string };
 }
 
+export interface WindowProps {
+  isMobile: boolean;
+}
+
 export interface User {
   id: string;
   email?: string | undefined;

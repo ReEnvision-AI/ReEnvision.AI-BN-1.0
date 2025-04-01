@@ -29,6 +29,35 @@
   }
 }
 
+/* Window dragging styles */
+.cursor-grabbing {
+  cursor: grabbing !important;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.cursor-grab {
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Smooth window movement */
+.react-draggable {
+  transition: transform 0.02s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  touch-action: none;
+}
+
+.react-draggable-dragging {
+  transition: none;
+  will-change: transform;
+  touch-action: none;
+}
+
 @layer components {
   /* ReactGrid customizations */
   .rg-cell {

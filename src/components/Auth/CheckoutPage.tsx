@@ -4,7 +4,13 @@ import React, { useEffect, useRef, useState } from 'react'; // Import useRef
 import { useAuthContext } from '../../context/AuthContext';
 import supabase from '../../services/supabaseService';
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_API_KEY);
+const stripeKey = import.meta.env.VITE_STRIPE_API_KEY;
+
+if (!stripeKey) {
+  throw new Error('Missing Stripe API key. Please check your .env file.');
+}
+
+const stripePromise = loadStripe(stripeKey);
 
 interface CheckoutSessionResponse {
   clientSecret: string;

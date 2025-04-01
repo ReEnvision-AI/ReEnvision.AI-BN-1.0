@@ -1,6 +1,7 @@
 import {
   Store,
   FileText,
+  FolderOpen,
   Calculator,
   Terminal,
   Globe, // Changed from Browser
@@ -16,12 +17,13 @@ import {
 export const iconMap = {
   store: Store,
   'file-text': FileText,
+  folderopen: FolderOpen,
   calculator: Calculator,
   terminal: Terminal,
   browser: Globe, // Changed to use Globe instead of Browser
+  settings: Settings,
   chat: MessageSquare,
   code: Code,
-  settings: Settings,
   bot: Bot,
   messagesquare: MessageSquare,
   blocks: Blocks,

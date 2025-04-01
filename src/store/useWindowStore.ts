@@ -2,14 +2,14 @@ import { create } from 'zustand';
 import type { Window } from '../types';
 import type { App } from '../api/apps';
 
-export interface Store {
+interface Store {
   windows: Window[];
   removeApp: (id: string) => void;
   openWindow: (app: App) => void;
   closeWindow: (id: string) => void;
   updateWindow: (window: Window) => void;
   bringToFront: (id: string) => void;
-  isAppOen: (app: App) => boolean;
+  isAppOpen: (app: App) => boolean;
 }
 
 export const useStore = create<Store>((set, get) => ({
@@ -21,11 +21,6 @@ export const useStore = create<Store>((set, get) => ({
     })),
 
   openWindow: (app) => {
-    const appOpen = get().windows.find((window) => window.app.id === app.id);
-    if (appOpen) {
-      return;
-    }
-
     set((state) => ({
       windows: [
         ...state.windows,
@@ -69,7 +64,7 @@ export const useStore = create<Store>((set, get) => ({
       };
     }),
 
-  isAppOen(app: App) {
+  isAppOpen(app: App) {
     const appOpen = get().windows.find((window) => window.app.id === app.id);
     if (appOpen) {
       return true;

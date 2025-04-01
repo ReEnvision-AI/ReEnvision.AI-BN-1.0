@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
+  }
+
+  body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
+  }
+
+  /* Fix for mobile Safari height issues */
+  @supports (-webkit-touch-callout: none) {
+    .min-h-screen {
+      min-height: -webkit-fill-available;
+    }
+  }
+}
+
+@layer components {
+  /* ReactGrid customizations */
+  .rg-cell {
+    @apply text-gray-200 bg-gray-900 border-gray-700;
+  }
+
+  .rg-cell.header {
+    @apply bg-gray-800 text-gray-400 font-medium;
+  }
+
+  .rg-cell.selected {
+    @apply bg-blue-500/20 ring-2 ring-blue-500;
+  }
+
+  .rg-cell.text-cell {
+    @apply px-2 py-1;
+  }
+
+  .rg-row-header {
+    @apply bg-gray-800 text-gray-400 font-medium;
+  }
+
+  .rg-column-header {
+    @apply bg-gray-800 text-gray-400 font-medium;
+  }
+
+  /* Ensure grid stays within bounds */
+  .rg-pane {
+    @apply overflow-auto;
+    max-width: 100vw;
+    max-height: calc(100vh - 100px); /* Account for toolbar and formula bar */
+  }
+}

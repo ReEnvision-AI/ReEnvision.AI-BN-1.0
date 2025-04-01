@@ -1,20 +1,49 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Desktop } from './components/Desktop/Desktop';
 import { AuthPage } from './components/Auth/AuthPage';
 import { CheckoutPage } from './components/Auth/CheckoutPage';
-//import { useAuthStore } from './store/useAuthStore';
-import supabase from './services/supabaseService';
+import { useAuthStore } from './store/useAuthStore';
+import supabase, { updateLastActivity } from './services/supabaseService';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { ReturnPage } from './components/Return';
 import { useAuthContext } from './context/AuthContext';
+import { isSessionValid } from './services/supabaseService';
 
 function App() {
   //const { user, setUser, loading, setLoading } = useAuthStore();
   const { user, setUser} = useAuthContext();
-
   const [configError, setConfigError] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Update last activity on user interaction
+  const handleUserActivity = useCallback(() => {
+    if (user) {
+      updateLastActivity();
+    }
+  }, [user]);
+
+  // Set up activity listeners
+  useEffect(() => {
+    if (user) {
+      window.addEventListener('mousemove', handleUserActivity);
+      window.addEventListener('keydown', handleUserActivity);
+      window.addEventListener('touchstart', handleUserActivity);
+      window.addEventListener('scroll', handleUserActivity);
+
+      return () => {
+        window.removeEventListener('mousemove', handleUserActivity);
+        window.removeEventListener('keydown', handleUserActivity);
+        window.removeEventListener('touchstart', handleUserActivity);
+        window.removeEventListener('scroll', handleUserActivity);
+      };
+    }
+  }, [user, handleUserActivity]);
+
+  // Initialize auth store
+  useEffect(() => {
+    useAuthStore.getState().init();
+  }, []);
 
   useEffect(() => {
     // Check if Supabase is properly configured
@@ -29,14 +58,14 @@ function App() {
     // Check active sessions and sets the user
     supabase.auth.getSession().then(({ data: { session } }) => {
       console.log('Session results:', session);
-      setUser(
-        session?.user
-          ? {
-              id: session.user.id,
-              email: session.user.email ?? '',
-            }
-          : null,
-      );
+      if (session?.user && isSessionValid()) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email ?? '',
+        });
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     });
 
@@ -45,14 +74,14 @@ function App() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       console.log('Auth state change:', _event, session);
-      setUser(
-        session?.user
-          ? {
-              id: session.user.id,
-              email: session.user.email ?? '',
-            }
-          : null,
-      );
+      if (session?.user && isSessionValid()) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email ?? '',
+        });
+      } else {
+        setUser(null);
+      }
     });
 
     return () => subscription.unsubscribe();
