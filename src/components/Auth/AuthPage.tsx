@@ -137,7 +137,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({login = true}: AuthPageProps)
       
       {/* Stars */}
       {/* Stars */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 pointer-events-none">
         {stars.map((star, i) => (
           <motion.div
             key={i}
@@ -163,7 +163,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({login = true}: AuthPageProps)
       </div>
 
       {/* Low-poly background */}
-      <svg className="absolute inset-0 w-full h-full">
+      <svg className="absolute inset-0 w-full h-full pointer-events-none">
         {polygons.map((poly, i) => (
           <polygon
             key={i}
@@ -173,7 +173,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({login = true}: AuthPageProps)
           />
         ))}
       </svg>
-      <div className="absolute inset-0 opacity-50">
+      <div className="absolute inset-0 opacity-50 pointer-events-none">
         {nodes.map((node, i) => (
           <NetworkNode key={`node-${i}`} {...node} />
         ))}
@@ -202,6 +202,15 @@ export const AuthPage: React.FC<AuthPageProps> = ({login = true}: AuthPageProps)
           <p className="text-blue-200">Experience the future of intelligent computing</p>
         </div>
         {isLogin ? <LoginForm /> : <SignUpForm />} 
+        <p className="mt-4 text-center text-gray-300">
+          {isLogin ? "Don't have an account " : "Already have an account? "}
+          <button 
+            onClick={() => setIsLogin(!isLogin)} 
+            className="text-blue-400 hover:text-blue-300 underline"
+          >
+            {isLogin ? 'Sign up' : 'Log in'}
+          </button>
+        </p>
       </div>
     </div>
   );

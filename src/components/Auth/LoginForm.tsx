@@ -69,15 +69,6 @@ export const LoginForm: React.FC = () => {
         >
           {isLoading ? 'Signing in...' : 'Sign In'}
         </button>
-        <p className="mt-4 text-center text-gray-300">
-          Don't have an account?{' '}
-          <button 
-            onClick={() => navigate('/signup')} 
-            className="text-blue-400 hover:text-blue-300 underline"
-          >
-            Sign up
-          </button>
-        </p>
       </form>
     </div>
   );
