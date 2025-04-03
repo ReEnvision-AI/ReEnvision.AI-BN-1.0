@@ -1,10 +1,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import reactNativeWeb from 'vite-plugin-react-native-web';
-import mkcert from 'vite-plugin-mkcert'
+
 
 export default defineConfig({
-  plugins: [reactNativeWeb(), react(), mkcert()],
+  plugins: [reactNativeWeb(), react()],
   resolve: {
     extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json']
   },
