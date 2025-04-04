@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import supabase from '../services/supabaseService';
 import { App } from '../types';
+import { useDesktopStore } from './useDesktopStore'; // Import desktop store
 
 interface AppStore {
   installableApps: App[];
@@ -115,11 +116,20 @@ export const useAppStore = create<AppStore>()(
           throw error;
         }
 
+        // Add app to local installed list
         const app = get().installableApps.find((app) => app.id === app_id);
         if (app) {
           set({ installedApps: [...get().installedApps, app] });
+
+          // Add app to all workspaces in desktop store
+          const { backgrounds, updateBackground } = useDesktopStore.getState();
+          backgrounds.forEach(bg => {
+            if (!bg.appIds.includes(app_id)) {
+              updateBackground(bg.id, { appIds: [...bg.appIds, app_id] });
+            }
+          });
         }
-        
+
         set({ loading: false });
       },
 
@@ -134,8 +144,17 @@ export const useAppStore = create<AppStore>()(
             throw error;
           }
 
+          // Remove app from local installed list
           set({
             installedApps: get().installedApps.filter((app) => app.id !== app_id),
+          });
+
+          // Remove app from all workspaces in desktop store
+          const { backgrounds, updateBackground } = useDesktopStore.getState();
+          backgrounds.forEach(bg => {
+            if (bg.appIds.includes(app_id)) {
+              updateBackground(bg.id, { appIds: bg.appIds.filter(id => id !== app_id) });
+            }
           });
         }
         set({ loading: false });

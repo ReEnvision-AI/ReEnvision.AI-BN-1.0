@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Pencil, Lock, Plus, Trash2, X, Upload, Image, HelpCircle, Info, AlertCircle } from 'lucide-react';
+import { Pencil, Lock, Plus, Trash2, X, Upload, Image, HelpCircle, Info, AlertCircle, Archive } from 'lucide-react'; // Added Archive import
 import supabase from '../../../services/supabaseService';
 
 export function AdminPanel({ onClose }) {
@@ -15,6 +15,7 @@ export function AdminPanel({ onClose }) {
   const [editingApp, setEditingApp] = useState(null);
   const [showArchived, setShowArchived] = useState(false);
   const [filterTier, setFilterTier] = useState('');
+  const [showGuide, setShowGuide] = useState(false); // Added state for guide visibility
   const [newApp, setNewApp] = useState({
     name: '',
     description: '',
@@ -353,6 +354,17 @@ export function AdminPanel({ onClose }) {
     } catch (err) {
       setError('Failed to remove screenshot');
     }
+  };
+
+  // Placeholder functions for missing handlers
+  const handleCreateFolder = () => {
+    console.log("Create folder action triggered");
+    // Implement folder creation logic here
+  };
+
+  const handleBulkAction = (action) => {
+    console.log(`Bulk action triggered: ${action}`);
+    // Implement bulk action logic here
   };
 
   if (!isAdmin) {

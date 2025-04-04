@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react'; // Import useRef
 import { useStore } from '../../store/useWindowStore';
 import { Power, X, Maximize2 } from 'lucide-react';
 import { TaskbarItem } from './TaskBarItem';
@@ -23,6 +23,11 @@ export const Taskbar: React.FC = () => {
   const [isFullscreen, setIsFullscreen] = React.useState(false);
   const [isHovered, setIsHovered] = React.useState(false);
   const activeBackground = backgrounds.find(bg => bg.id === activeBackgroundId);
+
+  // State for triple-click detection
+  const clickCount = useRef(0);
+  const clickTimeout = useRef<NodeJS.Timeout | null>(null);
+  const TRIPLE_CLICK_DELAY = 500; // milliseconds
 
   // Update time every second
   React.useEffect(() => {
@@ -51,7 +56,6 @@ export const Taskbar: React.FC = () => {
   const allApps = defaultApps.concat(installedApps || []);
 
   const handleLogout = async () => {
-    //await supabase.auth.signOut();
     await signOut();
   };
 
@@ -83,12 +87,40 @@ export const Taskbar: React.FC = () => {
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
-  
+
   // Handle workspace switching
   const handleCycleBackground = () => {
     cycleBackground();
     setShowWorkspaceName(true);
     setTimeout(() => setShowWorkspaceName(false), 2000);
+  };
+
+  // Handle center button click (single and triple)
+  const handleCenterButtonClick = () => {
+    clickCount.current += 1;
+
+    if (clickTimeout.current) {
+      clearTimeout(clickTimeout.current);
+    }
+
+    if (clickCount.current === 1) {
+      // Start timer for potential multi-click
+      clickTimeout.current = setTimeout(() => {
+        // If timer expires, it was a single click
+        setShowMenu(!showMenu);
+        clickCount.current = 0; // Reset count
+      }, TRIPLE_CLICK_DELAY);
+    } else if (clickCount.current === 3) {
+      // Triple click detected
+      handleCycleBackground();
+      clickCount.current = 0; // Reset count
+      if (clickTimeout.current) {
+        clearTimeout(clickTimeout.current); // Clear the single click timer
+      }
+    } else if (clickCount.current > 3) {
+      // Reset if more than 3 clicks
+      clickCount.current = 0;
+    }
   };
 
   return (
@@ -184,21 +216,17 @@ export const Taskbar: React.FC = () => {
           {/* Center: Logo */}
           <div className="flex items-center justify-center pointer-events-auto absolute left-1/2 -translate-x-1/2">
             <button
-              onClick={() => setShowMenu(!showMenu)}
-              onDoubleClick={(e) => {
-                e.stopPropagation();
-                handleCycleBackground();
-              }}
+              onClick={handleCenterButtonClick} // Use the new handler
               className={`
                 w-14 h-14 hover:bg-white/5 rounded-full
                 touch-manipulation cursor-pointer
                 flex items-center justify-center
-                focus:outline-none focus:ring-2 focus:ring-white/20 
+                focus:outline-none focus:ring-2 focus:ring-white/20
                 active:bg-white/20 overflow-hidden
                 ${showMenu ? 'bg-white/5' : ''}
                 group relative
               `}
-              aria-label="Open Start Menu"
+              aria-label="Open Start Menu / Cycle Workspace (Triple Click)"
             >
               <AnimatePresence>
                 {showWorkspaceName && (
@@ -217,7 +245,7 @@ export const Taskbar: React.FC = () => {
                 <directionalLight position={[5, 5, 5]} intensity={0.8} />
                 <pointLight position={[-5, -5, -5]} intensity={0.5} color="#ffffff" />
                 <pointLight position={[0, 0, 5]} intensity={0.4} color="#ffffff" />
-                <OrbitControls 
+                <OrbitControls
                   enableZoom={false}
                   enablePan={false}
                   minPolarAngle={Math.PI / 2}
