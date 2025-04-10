@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Pencil, Lock, Plus, Trash2, X, Upload, Image, HelpCircle, Info, AlertCircle, Archive } from 'lucide-react'; // Added Archive import
+import { Pencil, Lock, Plus, Trash2, X, Upload, Image, HelpCircle, Info, AlertCircle, Archive, ShieldAlert, Loader2 } from 'lucide-react'; // Added ShieldAlert, Loader2
 import supabase from '../../../services/supabaseService';
+import { useAuthContext } from '../../../context/AuthContext'; // Import useAuthContext
 
 export function AdminPanel({ onClose }) {
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [password, setPassword] = useState('');
+  const { user } = useAuthContext(); // Get user from context
+  const [isVerifyingAdmin, setIsVerifyingAdmin] = useState(true); // State for checking admin status
+  const [isAdminVerified, setIsAdminVerified] = useState(false); // State for verification result
   const [error, setError] = useState('');
   const [apps, setApps] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -15,7 +17,7 @@ export function AdminPanel({ onClose }) {
   const [editingApp, setEditingApp] = useState(null);
   const [showArchived, setShowArchived] = useState(false);
   const [filterTier, setFilterTier] = useState('');
-  const [showGuide, setShowGuide] = useState(false); // Added state for guide visibility
+  const [showGuide, setShowGuide] = useState(false);
   const [newApp, setNewApp] = useState({
     name: '',
     description: '',
@@ -30,14 +32,55 @@ export function AdminPanel({ onClose }) {
     screenshots: []
   });
 
+  // Effect to verify admin status via RPC call after user is loaded
   useEffect(() => {
-    if (isAdmin) {
+    const verifyAdminStatus = async () => {
+      if (!user) {
+        setIsVerifyingAdmin(false);
+        setIsAdminVerified(false);
+        return;
+      }
+
+      setIsVerifyingAdmin(true);
+      setError(''); // Clear previous errors
+
+      try {
+        // Call the is_admin function in Supabase.
+        // Assumes the function uses auth.uid() internally (SECURITY DEFINER).
+        // If it requires a user_id parameter, adjust the call like:
+        // supabase.rpc('is_admin', { user_id_to_check: user.id })
+        const { data, error: rpcError } = await supabase.rpc('is_admin');
+
+        if (rpcError) {
+          console.error('Error calling is_admin RPC:', rpcError);
+          throw new Error(`Failed to verify admin status: ${rpcError.message}`);
+        }
+
+        console.log('is_admin RPC result:', data); // Log the result
+        setIsAdminVerified(!!data); // Set verified status based on RPC result (true if data is truthy)
+
+      } catch (err) {
+        console.error('Admin verification failed:', err);
+        setError(err.message || 'Failed to verify admin status.');
+        setIsAdminVerified(false);
+      } finally {
+        setIsVerifyingAdmin(false);
+      }
+    };
+
+    verifyAdminStatus();
+  }, [user]); // Re-run when user changes
+
+  // Effect to fetch data only if admin status is verified
+  useEffect(() => {
+    if (isAdminVerified) {
       fetchApps();
       fetchCategories();
     }
-  }, [isAdmin]);
+  }, [isAdminVerified]); // Re-run when admin verification status changes
 
   const fetchApps = async () => {
+    setError('');
     const { data: appsData, error: appsError } = await supabase
       .from('app_categories_view')
       .select('*');
@@ -48,10 +91,9 @@ export function AdminPanel({ onClose }) {
       return;
     }
 
-    // Ensure all required fields are present
     const processedApps = appsData?.map(app => ({
       ...app,
-      id: app.app_id, // Map app_id to id for consistency
+      id: app.app_id,
       screenshots: app.screenshots || [],
       category_ids: app.category_ids || [],
       category_names: app.category_names || []
@@ -61,12 +103,14 @@ export function AdminPanel({ onClose }) {
   };
 
   const fetchCategories = async () => {
+    setError('');
     const { data, error } = await supabase
       .from('categories')
       .select('*')
       .order('id');
 
     if (error) {
+      console.error('Error fetching categories:', error);
       setError('Failed to fetch categories');
       return;
     }
@@ -74,27 +118,12 @@ export function AdminPanel({ onClose }) {
     setCategories(data);
   };
 
-  const verifyAdmin = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('app_tiers')
-        .select('*');
-
-      if (error) throw error;
-
-      // In production, this should be done server-side
-      if (password === 'Sup3rAdm!n') {
-        setIsAdmin(true);
-        setError('');
-      } else {
-        setError('Invalid password');
-      }
-    } catch (err) {
-      setError('Failed to verify credentials');
-    }
-  };
+  // --- Handlers (handleSave, handleDelete, etc.) ---
+  // Add checks within handlers to ensure isAdminVerified is true before proceeding
 
   const handleSave = async () => {
+    if (!isAdminVerified) return; // Ensure user is verified admin
+    // ... rest of handleSave logic
     try {
       const { error } = await supabase
         .from('installable_apps')
@@ -105,7 +134,6 @@ export function AdminPanel({ onClose }) {
 
       if (error) throw error;
       
-      // Update categories
       const { error: catError } = await supabase
         .from('app_categories')
         .delete()
@@ -134,7 +162,9 @@ export function AdminPanel({ onClose }) {
   };
 
   const handleDelete = async (appId) => {
-    try {
+    if (!isAdminVerified) return; // Ensure user is verified admin
+    // ... rest of handleDelete logic
+     try {
       const { error } = await supabase
         .from('installable_apps')
         .delete()
@@ -148,17 +178,14 @@ export function AdminPanel({ onClose }) {
   };
 
   const handleCreate = async () => {
+    if (!isAdminVerified) return; // Ensure user is verified admin
+    // ... rest of handleCreate logic
     try {
-      // Validate required fields
       if (!newApp.name || !newApp.icon || !newApp.url) {
         setError('Name, icon, and URL are required');
         return;
       }
-
-      // Ensure screenshots is an array
       const screenshots = newApp.screenshots || [];
-
-      // Create the app
       const { data, error } = await supabase
         .from('installable_apps')
         .insert([{
@@ -178,34 +205,22 @@ export function AdminPanel({ onClose }) {
 
       if (error) throw error;
 
-      // Add category relationship
       if (newApp.category_ids?.length) {
         const categoryInserts = newApp.category_ids.map(catId => ({
-          app_id: data.id, // Use the newly created app's ID
+          app_id: data.id,
           category_id: catId
         }));
-
         const { error: catError } = await supabase
           .from('app_categories')
           .insert(categoryInserts);
-
         if (catError) throw catError;
       }
 
       await fetchApps();
-      // Reset form
       setNewApp({
-        name: '',
-        description: '',
-        icon: '',
-        url: '',
-        tier: 'base',
-        category_ids: [],
-        preferred_width: 800,
-        preferred_height: 600,
-        min_width: 400,
-        min_height: 300,
-        screenshots: []
+        name: '', description: '', icon: '', url: '', tier: 'base',
+        category_ids: [], preferred_width: 800, preferred_height: 600,
+        min_width: 400, min_height: 300, screenshots: []
       });
     } catch (err) {
       console.error('Error creating app:', err);
@@ -214,6 +229,7 @@ export function AdminPanel({ onClose }) {
   };
 
   const handleEdit = (app) => {
+    if (!isAdminVerified) return; // Ensure user is verified admin
     setEditingApp({
       ...app,
       category_ids: app.category_ids || []
@@ -221,54 +237,38 @@ export function AdminPanel({ onClose }) {
   };
 
   const handleUpdate = async () => {
+    if (!isAdminVerified) return; // Ensure user is verified admin
+    // ... rest of handleUpdate logic
     try {
-      // Validate required fields
       if (!editingApp.name || !editingApp.icon || !editingApp.url) {
         setError('Name, icon, and URL are required');
         return;
       }
-
-      // Ensure screenshots is an array
       const screenshots = editingApp.screenshots || [];
-
       const { error } = await supabase
         .from('installable_apps')
         .update({
-          name: editingApp.name,
-          description: editingApp.description,
-          icon: editingApp.icon,
-          url: editingApp.url,
-          tier: editingApp.tier,
-          preferred_width: editingApp.preferred_width,
-          preferred_height: editingApp.preferred_height,
-          min_width: editingApp.min_width,
-          min_height: editingApp.min_height,
-          screenshots: screenshots
+          name: editingApp.name, description: editingApp.description, icon: editingApp.icon,
+          url: editingApp.url, tier: editingApp.tier, preferred_width: editingApp.preferred_width,
+          preferred_height: editingApp.preferred_height, min_width: editingApp.min_width,
+          min_height: editingApp.min_height, screenshots: screenshots
         })
         .eq('id', editingApp.id);
-
       if (error) throw error;
       
-      // Update categories
-      // First delete existing categories
       const { error: deleteError } = await supabase
         .from('app_categories')
         .delete()
         .eq('app_id', editingApp.id);
-
       if (deleteError) throw deleteError;
 
-      // Then insert new categories if any are selected
       if (editingApp.category_ids?.length) {
         const categoryInserts = editingApp.category_ids.map(catId => ({
-          app_id: editingApp.id,
-          category_id: catId
+          app_id: editingApp.id, category_id: catId
         }));
-
         const { error: insertError } = await supabase
           .from('app_categories')
           .insert(categoryInserts);
-
         if (insertError) throw insertError;
       }
 
@@ -280,54 +280,34 @@ export function AdminPanel({ onClose }) {
   };
 
   const handleScreenshotUpload = async (e, app) => {
+    if (!isAdminVerified) return; // Ensure user is verified admin
+    // ... rest of handleScreenshotUpload logic
     const file = e.target.files[0];
     if (!file) return;
-    
-    // Validate file type
     if (!file.type.startsWith('image/')) {
-      setError('Please upload an image file');
-      return;
+      setError('Please upload an image file'); return;
     }
-
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      setError('Image size must be less than 5MB');
-      return;
+      setError('Image size must be less than 5MB'); return;
     }
-
-    // Create preview
     setPreviewUrl(URL.createObjectURL(file));
     setUploadingScreenshot(true);
-
     try {
-      // Upload to Supabase Storage
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
       const { data, error } = await supabase.storage
         .from('screenshots')
         .upload(`app-${app.id}/${fileName}`, file);
-
       if (error) throw error;
-
-      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('screenshots')
         .getPublicUrl(`app-${app.id}/${fileName}`);
-
-      // Update app screenshots
-      const updatedApp = {
-        ...app,
-        screenshots: [...(app.screenshots || []), publicUrl]
-      };
-
+      const updatedApp = { ...app, screenshots: [...(app.screenshots || []), publicUrl] };
       const { error: updateError } = await supabase
         .from('installable_apps')
         .update({ screenshots: updatedApp.screenshots })
         .eq('id', app.id);
-
       if (updateError) throw updateError;
-
-      // Refresh apps list
       await fetchApps();
     } catch (err) {
       setError('Failed to upload screenshot');
@@ -338,42 +318,51 @@ export function AdminPanel({ onClose }) {
   };
 
   const handleRemoveScreenshot = async (app, screenshotUrl) => {
+    if (!isAdminVerified) return; // Ensure user is verified admin
+    // ... rest of handleRemoveScreenshot logic
     try {
-      // Update app with filtered screenshots
       const updatedScreenshots = (app.screenshots || []).filter(url => url !== screenshotUrl);
-      
       const { error } = await supabase
         .from('installable_apps')
         .update({ screenshots: updatedScreenshots })
         .eq('id', app.id);
-
       if (error) throw error;
-
-      // Refresh apps list
       await fetchApps();
     } catch (err) {
       setError('Failed to remove screenshot');
     }
   };
 
-  // Placeholder functions for missing handlers
-  const handleCreateFolder = () => {
-    console.log("Create folder action triggered");
-    // Implement folder creation logic here
-  };
+  // Placeholder functions
+  const handleCreateFolder = () => { if (!isAdminVerified) return; console.log("Create folder action triggered"); };
+  const handleBulkAction = (action) => { if (!isAdminVerified) return; console.log(`Bulk action triggered: ${action}`); };
 
-  const handleBulkAction = (action) => {
-    console.log(`Bulk action triggered: ${action}`);
-    // Implement bulk action logic here
-  };
+  // --- Conditional Rendering based on Verification Status ---
 
-  if (!isAdmin) {
+  if (!user) {
+    return (
+      <div className="p-6 text-center text-gray-400">
+        Please log in to access the admin panel.
+      </div>
+    );
+  }
+
+  if (isVerifyingAdmin) {
+    return (
+      <div className="p-6 flex items-center justify-center text-gray-400">
+        <Loader2 className="w-6 h-6 animate-spin mr-2" />
+        Verifying admin status...
+      </div>
+    );
+  }
+
+  if (!isAdminVerified) {
     return (
       <div className="p-4 md:p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <Lock className="w-6 h-6 text-blue-400" />
-            <h2 className="text-xl font-semibold text-white">Admin Panel</h2>
+            <ShieldAlert className="w-6 h-6 text-red-400" />
+            <h2 className="text-xl font-semibold text-white">Access Denied</h2>
           </div>
           <button
             onClick={onClose}
@@ -382,54 +371,21 @@ export function AdminPanel({ onClose }) {
             <X className="w-5 h-5" />
           </button>
         </div>
-
-        <div className="bg-gray-800 rounded-lg p-4 md:p-6 max-w-md mx-auto">
-          {/* Restored Admin Guide section */}
-          <div className="mb-4 p-4 bg-blue-500/10 rounded-lg border border-blue-500/20">
-            <div className="flex items-start gap-3">
-              <Info className="w-5 h-5 text-blue-400 mt-0.5" />
-              <div>
-                <h3 className="text-sm font-medium text-blue-400 mb-1">Admin Guide</h3>
-                {/* Removed the default password text */}
-                <p className="text-sm text-gray-300">Enter the admin password to access the App Store management interface.</p>
-              </div>
+        <div className="bg-gray-800 rounded-lg p-6 max-w-md mx-auto text-center">
+          <p className="text-gray-300">You do not have permission to access this admin panel.</p>
+          {error && (
+            <div className="mt-4 p-3 bg-red-500/10 text-red-400 rounded-lg text-sm">
+              {error}
             </div>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Admin Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {error && (
-              <div className="p-3 bg-red-500/10 text-red-400 rounded-lg text-sm">
-                {error}
-              </div>
-            )}
-
-            <button
-              onClick={verifyAdmin}
-              className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-            >
-              Verify
-            </button>
-          </div>
+          )}
         </div>
       </div>
     );
   }
 
-  // Rest of the component remains the same...
+  // --- Render Admin Panel Content (User is Verified Admin) ---
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <div className="h-full flex flex-col overflow-hidden p-4 md:p-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold text-white">App Store Administration</h2>
         <div className="flex items-center gap-2">
@@ -449,6 +405,14 @@ export function AdminPanel({ onClose }) {
         </div>
       </div>
 
+      {/* Error display */}
+      {error && (
+        <div className="mb-4 p-3 bg-red-500/10 text-red-400 rounded-lg text-sm">
+          {error}
+        </div>
+      )}
+
+      {/* Admin Guidelines */}
       <div className="mb-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
         <div className="flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-yellow-400 mt-0.5" />
@@ -466,6 +430,7 @@ export function AdminPanel({ onClose }) {
         </div>
       </div>
 
+      {/* Filters and Actions */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
           <button
@@ -487,25 +452,18 @@ export function AdminPanel({ onClose }) {
             <option value="community">Community</option>
           </select>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-700 rounded-lg text-gray-400"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 pb-6 space-y-6">
-        {/* App List */}
+      {/* Main Content Area */}
+      <div className="flex-1 overflow-y-auto space-y-6">
+        {/* App List Grid */}
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {/* Quick Actions */}
           <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 p-4 rounded-lg border border-blue-500/20">
             <h3 className="text-lg font-medium text-white mb-4">Quick Actions</h3>
             <div className="space-y-2">
               <button
-                onClick={() => handleCreateFolder()}
+                onClick={handleCreateFolder}
                 className="w-full flex items-center gap-2 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg text-blue-300"
               >
                 <Plus className="w-4 h-4" />
