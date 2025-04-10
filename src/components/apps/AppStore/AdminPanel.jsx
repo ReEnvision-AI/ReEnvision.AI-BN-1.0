@@ -384,12 +384,14 @@ export function AdminPanel({ onClose }) {
         </div>
 
         <div className="bg-gray-800 rounded-lg p-4 md:p-6 max-w-md mx-auto">
+          {/* Restored Admin Guide section */}
           <div className="mb-4 p-4 bg-blue-500/10 rounded-lg border border-blue-500/20">
             <div className="flex items-start gap-3">
               <Info className="w-5 h-5 text-blue-400 mt-0.5" />
               <div>
                 <h3 className="text-sm font-medium text-blue-400 mb-1">Admin Guide</h3>
-                <p className="text-sm text-gray-300">Enter the admin password to access the App Store management interface. Default password: Sup3rAdm!n</p>
+                {/* Removed the default password text */}
+                <p className="text-sm text-gray-300">Enter the admin password to access the App Store management interface.</p>
               </div>
             </div>
           </div>
@@ -425,6 +427,7 @@ export function AdminPanel({ onClose }) {
     );
   }
 
+  // Rest of the component remains the same...
   return (
     <div className="h-full flex flex-col overflow-hidden">
       <div className="flex items-center justify-between mb-6">

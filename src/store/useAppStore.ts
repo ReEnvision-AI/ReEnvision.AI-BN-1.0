@@ -36,8 +36,8 @@ export const useAppStore = create<AppStore>()(
         if (error) {
           console.error('Error fetching categories:', error);
           set({ error: 'Failed to fetch categories', loading: false });
-          set({ loading: false });
-          throw error;
+          // No need to throw, let the component handle the error state
+          return; 
         }
 
         set({ categories: data || [], loading: false });
@@ -53,44 +53,68 @@ export const useAppStore = create<AppStore>()(
         if (error) {
           console.error('Error retrieving apps for the app store:', error);
           set({ error: 'Failed to fetch apps', loading: false });
-          set({ loading: false });
-          throw error;
+          // No need to throw
+          return; 
         }
 
-        set({ installableApps: data || [] });
-        set({ loading: false });
+        set({ installableApps: data || [], loading: false });
       },
 
       fetchInstalledApps: async (user_id: string) => {
-        set({ loading: true });
+        console.log(`[fetchInstalledApps] Called for user_id: ${user_id}`); // DEBUG
+        set({ loading: true, error: null }); // Reset error state
+
+        if (!user_id) {
+          console.error('[fetchInstalledApps] Error: user_id is missing'); // DEBUG
+          set({ error: 'User ID is missing', loading: false });
+          return; // Exit early if no user_id
+        }
+
         // First get the user's installed app IDs
+        console.log('[fetchInstalledApps] Fetching app IDs from user_apps...'); // DEBUG
         const { data: userApps, error: userAppsError } = await supabase
           .from('user_apps')
           .select('app_id')
           .eq('user_id', user_id);
 
         if (userAppsError) {
-          console.error('Error retrieving user apps:', userAppsError);
-          set({ error: 'Failed to fetch installed apps', loading: false });
-          set({ loading: false });
-          throw userAppsError;
+          console.error('[fetchInstalledApps] Error retrieving user app IDs:', userAppsError); // DEBUG
+          set({ error: 'Failed to fetch installed app IDs', loading: false });
+          // Do not throw here, let the component handle the error state
+          return; 
+        }
+
+        console.log('[fetchInstalledApps] Fetched user app IDs data:', userApps); // DEBUG
+
+        const appIds = userApps?.map(ua => ua.app_id) || [];
+        console.log('[fetchInstalledApps] Extracted app IDs:', appIds); // DEBUG
+
+        // If the user has no installed apps, set installedApps to empty and finish
+        if (appIds.length === 0) {
+          console.log('[fetchInstalledApps] User has no installed apps.'); // DEBUG
+          set({ installedApps: [], loading: false });
+          return;
         }
 
         // Then get the full app details for those IDs
-        const { data, error } = await supabase
+        console.log(`[fetchInstalledApps] Fetching app details for IDs: ${appIds.join(', ')}`); // DEBUG
+        const { data: appDetails, error: appDetailsError } = await supabase
           .from('installable_apps')
           .select('*')
-          .in('id', userApps?.map(ua => ua.app_id) || []);
+          .in('id', appIds); // Use the extracted appIds array
 
-        if (error) {
-          console.error('Error retrieving apps for user:', error);
-          set({ loading: false });
-          throw error;
+        if (appDetailsError) {
+          console.error('[fetchInstalledApps] Error retrieving app details:', appDetailsError); // DEBUG
+          set({ error: 'Failed to fetch installed app details', loading: false });
+          // Do not throw here
+          return; 
         }
 
-        set({ installedApps: data || [] });
-        set({ loading: false });
+        console.log('[fetchInstalledApps] Fetched app details:', appDetails); // DEBUG
+        set({ installedApps: appDetails || [], loading: false });
+        console.log('[fetchInstalledApps] Completed successfully.'); // DEBUG
       },
+
 
       installApp: async (user_id: string, app_id: string) => {
         set({ loading: true });

@@ -2,12 +2,18 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../context/AuthContext';
 
-export const LoginForm: React.FC = () => {
+// Define props interface
+interface LoginFormProps {
+  isLogin: boolean;
+  setIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const LoginForm: React.FC<LoginFormProps> = ({ isLogin, setIsLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
+  // Removed local isLogin state
 
   const navigate = useNavigate();
   const {signIn} = useAuthContext();
@@ -30,6 +36,19 @@ export const LoginForm: React.FC = () => {
   return (
     <div className="w-full max-w-md p-8 bg-black/50 backdrop-blur-xl rounded-lg shadow-lg border border-blue-900/50">
       {error && <div className="mb-4 p-3 bg-red-500/20 text-red-200 rounded">{error}</div>}
+
+      {/* Moved toggle link here */}
+      <div className="mb-6 text-center text-sm">
+        <span className="text-gray-300">Don't have an account? </span>
+        <button
+          type="button" // Important: prevent form submission
+          onClick={() => setIsLogin(false)} // Use passed function
+          className="text-blue-400 hover:text-blue-300 underline font-medium"
+        >
+          Sign up
+        </button>
+      </div>
+
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label htmlFor="email" className="block text-sm font-medium text-gray-300">
@@ -61,8 +80,8 @@ export const LoginForm: React.FC = () => {
           type="submit"
           disabled={isLoading}
           className={`
-            w-full py-2 px-4 bg-blue-600/90 hover:bg-blue-700/90 text-white font-semibold 
-            rounded-lg shadow-md backdrop-blur transition-all hover:scale-[1.02] 
+            w-full py-2 px-4 bg-blue-600/90 hover:bg-blue-700/90 text-white font-semibold
+            rounded-lg shadow-md backdrop-blur transition-all hover:scale-[1.02]
             border border-blue-900/50 relative
             ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}
           `}

@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../context/AuthContext';
 
-export const SignUpForm: React.FC = () => {
+// Define props interface
+interface SignUpFormProps {
+  isLogin: boolean;
+  setIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const SignUpForm: React.FC<SignUpFormProps> = ({ isLogin, setIsLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +36,19 @@ export const SignUpForm: React.FC = () => {
     <div className="w-full max-w-md p-8 bg-black/50 backdrop-blur-xl rounded-lg shadow-lg border border-blue-900/50">
       <h2 className="text-2xl font-bold mb-6 text-center text-white">Create Account</h2>
       {error && <div className="mb-4 p-3 bg-red-500/20 text-red-200 rounded">{error}</div>}
+
+      {/* Moved toggle link here */}
+      <div className="mb-6 text-center text-sm">
+        <span className="text-gray-300">Already have an account? </span>
+        <button
+          type="button" // Important: prevent form submission
+          onClick={() => setIsLogin(true)} // Use passed function
+          className="text-blue-400 hover:text-blue-300 underline font-medium"
+        >
+          Log in
+        </button>
+      </div>
+
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label htmlFor="email" className="block text-sm font-medium text-gray-300">

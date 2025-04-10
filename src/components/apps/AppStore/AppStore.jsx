@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Download, Trash2, RefreshCw, Store, Package, Grid, Settings, Menu, X, ChevronDown, ChevronRight } from 'lucide-react';
+import { Search, Download, Trash2, RefreshCw, Store, Package, Grid, Settings, Menu, X, ChevronDown, ChevronRight, AlertCircle } from 'lucide-react'; // Added AlertCircle
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../../store/useAppStore';
 import { AdminPanel } from './AdminPanel.jsx';
@@ -60,7 +60,7 @@ const AppStore = () => {
       <div className="flex items-center justify-center h-full bg-gray-900">
         <div className="p-4 bg-red-500/10 rounded-lg border border-red-500/20">
           <div className="flex items-center gap-3 text-red-400">
-            <AlertCircle className="w-5 h-5" />
+            <AlertCircle className="w-5 h-5" /> {/* Now defined */}
             <p>Error loading apps: {error}</p>
           </div>
         </div>

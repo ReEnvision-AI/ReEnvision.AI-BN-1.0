@@ -28,7 +28,7 @@ const NetworkNode: React.FC<{ x: number; y: number; delay: number }> = ({ x, y, 
     className="absolute w-2 h-2 rounded-full bg-blue-400/30"
     style={{ left: `${x}%`, top: `${y}%` }}
     initial={{ scale: 0, opacity: 0 }}
-    animate={{ 
+    animate={{
       scale: [0, 1, 1, 0],
       opacity: [0, 0.8, 0.8, 0]
     }}
@@ -52,7 +52,7 @@ const NetworkLine: React.FC<{ x1: number; y1: number; x2: number; y2: number; de
       transformOrigin: 'left center'
     }}
     initial={{ scaleX: 0, opacity: 0 }}
-    animate={{ 
+    animate={{
       scaleX: [0, 1, 1, 0],
       opacity: [0, 0.5, 0.5, 0]
     }}
@@ -65,9 +65,10 @@ const NetworkLine: React.FC<{ x1: number; y1: number; x2: number; y2: number; de
   />
 );
 
+
 export const AuthPage: React.FC<AuthPageProps> = ({login = true}: AuthPageProps) => {
   const [isLogin, setIsLogin] = useState(login);
-  
+
   // Generate stars
   const stars = React.useMemo(() => {
     const result: Star[] = [];
@@ -90,7 +91,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({login = true}: AuthPageProps)
         x: Math.random() * 100,
         y: Math.random() * 100
       })).map(p => `${p.x},${p.y}`).join(' ');
-      
+
       result.push({
         points,
         opacity: Math.random() * 0.1 + 0.05,
@@ -134,8 +135,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({login = true}: AuthPageProps)
       style={{
         background: 'linear-gradient(to bottom, #000000, #050b16)'
       }}>
-      
-      {/* Stars */}
+
       {/* Stars */}
       <div className="absolute inset-0 pointer-events-none">
         {stars.map((star, i) => (
@@ -189,7 +189,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({login = true}: AuthPageProps)
               <directionalLight position={[5, 5, 5]} intensity={0.8} />
               <pointLight position={[-5, -5, -5]} intensity={0.5} color="#ffffff" />
               <pointLight position={[0, 0, 5]} intensity={0.4} color="#ffffff" />
-              <OrbitControls 
+              <OrbitControls
                 enableZoom={false}
                 enablePan={false}
                 minPolarAngle={Math.PI / 2}
@@ -201,16 +201,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({login = true}: AuthPageProps)
           <h1 className="text-4xl font-bold text-white mb-2">Welcome to ReEnvision AI</h1>
           <p className="text-blue-200">Experience the future of intelligent computing</p>
         </div>
-        {isLogin ? <LoginForm /> : <SignUpForm />} 
-        <p className="mt-4 text-center text-gray-300">
-          {isLogin ? "Don't have an account " : "Already have an account? "}
-          <button 
-            onClick={() => setIsLogin(!isLogin)} 
-            className="text-blue-400 hover:text-blue-300 underline"
-          >
-            {isLogin ? 'Sign up' : 'Log in'}
-          </button>
-        </p>
+        {/* Pass isLogin and setIsLogin to the forms */}
+        {isLogin ? <LoginForm isLogin={isLogin} setIsLogin={setIsLogin} /> : <SignUpForm isLogin={isLogin} setIsLogin={setIsLogin} />}
+        {/* Removed the toggle link paragraph from here */}
       </div>
     </div>
   );

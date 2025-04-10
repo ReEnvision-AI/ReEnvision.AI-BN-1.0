@@ -8,7 +8,7 @@ import {
   MessageSquare,
   Code,
   Settings,
-  Bot,
+  // Bot, // Removed Bot icon
   Blocks,
   Grid2x2X,
   AppWindow, // Added as another fallback
@@ -24,7 +24,7 @@ export const iconMap = {
   settings: Settings,
   chat: MessageSquare,
   code: Code,
-  bot: Bot,
+  // bot: Bot, // Removed Bot icon mapping
   messagesquare: MessageSquare,
   blocks: Blocks,
   tictactoe: Grid2x2X,
